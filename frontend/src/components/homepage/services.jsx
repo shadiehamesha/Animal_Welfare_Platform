@@ -66,11 +66,11 @@ const serviceLinks = [
     link: '/pharmacies',
   },
   {
-    title: 'Animals',
+    title: 'Pets',
     description: 'Browse profiles of animals looking for homes.',
     icon: '🐱',
     iconBg: 'bg-yellow-50',
-    link: '/animals',
+    link: '/pets',
   },
 ];
 
