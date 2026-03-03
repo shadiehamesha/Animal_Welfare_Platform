@@ -5,6 +5,7 @@ import ContactUs from './pages/contactus.jsx';
 import PrivacyPolicy from './pages/privacypolicy.jsx'
 import Login from './pages/login.jsx';
 import SignUp from './pages/signup.jsx';
+import StrayReport from './pages/strayreport.jsx';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/privacy" element={<PrivacyPolicy />}/>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/report" element={<StrayReport />} />
       </Routes>
   );
 }
