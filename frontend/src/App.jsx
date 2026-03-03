@@ -6,6 +6,17 @@ import PrivacyPolicy from './pages/privacypolicy.jsx'
 import Login from './pages/login.jsx';
 import SignUp from './pages/signup.jsx';
 import StrayReport from './pages/strayreport.jsx';
+import Hospitals from './pages/hospitals.jsx';
+import Shelters from './pages/shelters.jsx';
+import StrayMap from './pages/straymap.jsx';
+import Events from './pages/events.jsx';
+import Medicine from './pages/medicine.jsx';
+import Alerts from './pages/alerts.jsx';
+import Community from './pages/community.jsx';
+import Pharmacy from './pages/pharmacy.jsx';
+import Pets from './pages/pets.jsx';
+import Blog from './pages/blog.jsx';
+import Careers from './pages/careers.jsx';
 
 function App() {
   return (
@@ -17,6 +28,17 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/report" element={<StrayReport />} />
+        <Route path="/hospitals" element={<Hospitals />} />
+        <Route path="/shelters" element={<Shelters />} />
+        <Route path="/map" element={<StrayMap />} />
+        <Route path="/events" element={<Events />} />
+        <Route path="/medicines" element={<Medicine />} />
+        <Route path="/alerts" element={<Alerts />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/pharmacies" element={<Pharmacy />} />
+        <Route path="/pets" element={<Pets />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/careers" element={<Careers />} />
       </Routes>
   );
 }
