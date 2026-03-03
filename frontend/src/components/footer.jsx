@@ -52,7 +52,7 @@ const Footer = () => {
               </li>
               <li className="flex flex-col gap-0">
                 <span>123 Pet Lover Lane</span>
-                <span>San Francisco, CA 94103</span>
+                <span>Homagama, Sri Lanka</span>
               </li>
             </ul>
           </div>
