@@ -18,6 +18,8 @@ import Pets from './pages/pets.jsx';
 import Blog from './pages/blog.jsx';
 import Careers from './pages/careers.jsx';
 import Search from './pages/searchresults.jsx';
+import ForgotPassword from './pages/auth/forgotpassword.jsx';
+import ResetPassword from './pages/auth/resetpassword.jsx';
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/careers" element={<Careers />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
   );
 }
