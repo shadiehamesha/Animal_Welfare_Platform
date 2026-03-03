@@ -11,8 +11,8 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    // Main Navigation Container with a top border to match image
-    <nav className="bg-white w-full border-t-4 border-teal-600/20 shadow-sm font-sans">
+    // Main Navigation Container
+    <nav className="bg-white w-full font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
           
