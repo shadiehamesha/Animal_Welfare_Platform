@@ -25,9 +25,9 @@ const Footer = () => {
             <h3 className="text-white text-[16px] font-semibold mb-6">Services</h3>
             <ul className="flex flex-col gap-4 text-[15px]">
               <li><a href="/report" className="hover:text-teal-600 transition-colors duration-200">Report a Stray</a></li>
-              <li><a href="/hospital" className="hover:text-teal-600 transition-colors duration-200">Find a Hospital</a></li>
+              <li><a href="/hospitals" className="hover:text-teal-600 transition-colors duration-200">Find a Hospital</a></li>
               <li><a href="/shelters" className="hover:text-teal-600 transition-colors duration-200">Animal Shelters</a></li>
-              <li><a href="/pharmacy" className="hover:text-teal-600 transition-colors duration-200">Pet Pharmacy</a></li>
+              <li><a href="/pharmacies" className="hover:text-teal-600 transition-colors duration-200">Pet Pharmacy</a></li>
             </ul>
           </div>
 
