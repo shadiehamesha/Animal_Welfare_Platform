@@ -1,7 +1,22 @@
 import React from 'react';
 import { FaHeart, FaPaw } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+
+  const navigate = useNavigate();
+
+  const handleScrollToServices = () => {
+    const section = document.getElementById('services');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleReportStray = () => {
+    navigate('/report');
+  };
+  
   return (
     <section className="bg-white font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-24">
@@ -30,10 +45,10 @@ const Hero = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap items-center gap-4 mt-2">
-              <button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3.5 rounded-full font-semibold transition-colors shadow-md">
+              <button onClick={handleScrollToServices} className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3.5 rounded-full font-semibold transition-colors shadow-md">
                 Explore Services
               </button>
-              <button className="border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-3.5 rounded-full font-semibold transition-colors">
+              <button onClick={handleReportStray} className="border-2 border-teal-600 text-teal-600 hover:bg-teal-50 px-8 py-3.5 rounded-full font-semibold transition-colors">
                 Report a Stray
               </button>
             </div>
