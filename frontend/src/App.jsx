@@ -17,6 +17,7 @@ import Pharmacy from './pages/pharmacy.jsx';
 import Pets from './pages/pets.jsx';
 import Blog from './pages/blog.jsx';
 import Careers from './pages/careers.jsx';
+import Search from './pages/searchresults.jsx';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/pets" element={<Pets />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/careers" element={<Careers />} />
+        <Route path="/search" element={<Search />} />
       </Routes>
   );
 }
