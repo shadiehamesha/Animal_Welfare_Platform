@@ -87,7 +87,7 @@ const Hero = () => {
 
             {/* Floating Card: Heart Icon (Top Right) */}
             <div className="absolute top-[12%] right-[5%] bg-white p-5 rounded-2xl shadow-xl shadow-teal-900/5 flex items-center justify-center z-10 animate-[bounce_5s_infinite]">
-              <FaHeart className="text-slate-900 text-xl" />
+              <FaHeart className="text-xl text-pink-500" />
             </div>
 
             {/* Floating Card: Rescued Stats (Bottom Left) */}

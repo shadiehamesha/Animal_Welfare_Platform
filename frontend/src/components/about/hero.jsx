@@ -13,7 +13,7 @@ const AboutHero = () => {
       </div>
       
       {/* Bottom Left Heart */}
-      <FaHeart className="absolute bottom-24 left-10 md:left-32 text-3xl text-slate-900 hidden sm:block" />
+      <FaHeart className="absolute bottom-24 left-10 md:left-32 text-3xl text-pink-500 hidden sm:block" />
       
       {/* Top Right Cat Emoji */}
       <div className="absolute top-16 right-10 md:right-32 text-4xl sm:text-5xl hidden sm:block animate-[bounce_4s_infinite]">
