@@ -20,6 +20,11 @@ import Careers from './pages/careers.jsx';
 import Search from './pages/searchresults.jsx';
 import ForgotPassword from './pages/auth/forgotpassword.jsx';
 import ResetPassword from './pages/auth/resetpassword.jsx';
+import UserDashboard from './pages/dashboards/UserDashboard.jsx';
+import AdminDashboard from './pages/dashboards/AdminDashboard.jsx';
+import OrganizationDashboard from './pages/dashboards/OrganizationDashboard.jsx';
+import PharmacyDashboard from './pages/dashboards/PharmacyDashboard.jsx';
+import HospitalDashboard from './pages/dashboards/HospitalDashboard.jsx';
 
 function App() {
   return (
@@ -45,6 +50,11 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/dashboard/user" element={<UserDashboard />} />
+        <Route path="/dashboard/admin" element={<AdminDashboard />} />
+        <Route path="/dashboard/organization" element={<OrganizationDashboard />} />
+        <Route path="/dashboard/pharmacy" element={<PharmacyDashboard />} />
+        <Route path="/dashboard/hospital" element={<HospitalDashboard />} />
       </Routes>
   );
 }
