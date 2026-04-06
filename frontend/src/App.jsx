@@ -20,6 +20,8 @@ import Careers from './pages/careers.jsx';
 import Search from './pages/searchresults.jsx';
 import ForgotPassword from './pages/auth/forgotpassword.jsx';
 import ResetPassword from './pages/auth/resetpassword.jsx';
+
+import ProtectedRoute from './utils/ProtectedRoute.jsx';
 import UserDashboard from './pages/dashboards/UserDashboard.jsx';
 import AdminDashboard from './pages/dashboards/AdminDashboard.jsx';
 import OrganizationDashboard from './pages/dashboards/OrganizationDashboard.jsx';
@@ -29,6 +31,7 @@ import HospitalDashboard from './pages/dashboards/HospitalDashboard.jsx';
 function App() {
   return (
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<ContactUs />} />
@@ -50,11 +53,19 @@ function App() {
         <Route path="/search" element={<Search />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/dashboard/user" element={<UserDashboard />} />
-        <Route path="/dashboard/admin" element={<AdminDashboard />} />
-        <Route path="/dashboard/organization" element={<OrganizationDashboard />} />
-        <Route path="/dashboard/pharmacy" element={<PharmacyDashboard />} />
-        <Route path="/dashboard/hospital" element={<HospitalDashboard />} />
+
+        {/* Protected Dashboard Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard/user" element={<UserDashboard />} />
+          <Route path="/dashboard/organization" element={<OrganizationDashboard />} />
+          <Route path="/dashboard/pharmacy" element={<PharmacyDashboard />} />
+          <Route path="/dashboard/hospital" element={<HospitalDashboard />} />
+        </Route>
+
+        {/* Admin Only Route */}
+        <Route element={<ProtectedRoute allowedRoles={['system admin']} />}>
+          <Route path="/dashboard/admin" element={<AdminDashboard />} />
+        </Route>
       </Routes>
   );
 }
