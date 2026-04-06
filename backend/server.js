@@ -1,43 +1,36 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
+import { connectDB } from './config/db.js';
+import userRoutes from './routes/user.route.js';
+
+// Load environment variables
 dotenv.config();
+
+// Connect to MongoDB
+connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/animal-welfare';
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
-// CORS middleware
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-});
+// Routes
+app.use('/api/users', userRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
-  res.json({ message: 'Animal Welfare Platform API' });
+  res.json({ message: 'meoWoof Platform API' });
 });
 
 // Health check route
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
 });
-
-// MongoDB connection
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
 
 // 404 Error handling
 app.use((req, res) => {
