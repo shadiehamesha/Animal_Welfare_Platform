@@ -11,7 +11,7 @@ const AboutStats = () => {
             Our Impact in Numbers
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Together, we've achieved incredible milestones in animal welfare.
+            Together, we've achieved incredible milestones in meoWoof.
           </p>
         </div>
 
