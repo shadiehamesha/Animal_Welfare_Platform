@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Imported Link
+import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 const AdminDashboard = () => {
@@ -46,30 +46,29 @@ const AdminDashboard = () => {
                 />
             )}
 
-            {/* Sidebar */}
+            {/* Sidebar - Bold fonts removed */}
             <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 z-30 transform transition-transform duration-300 md:relative md:translate-x-0 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="h-20 flex items-center px-8 border-b border-gray-100">
-                    <span className="text-xl font-bold text-teal-800 tracking-tight">🐾 meoWoof</span>
+                    <span className="text-xl text-teal-800 tracking-tight">🐾 meoWoof</span>
                 </div>
                 
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    {/* Replaced anchor tags with React Router Links */}
-                    <Link to="/dashboard/admin" className="flex items-center gap-3 px-4 py-3 bg-[#eafff5] text-teal-700 rounded-xl font-semibold transition-colors">
+                    <Link to="/dashboard/admin" className="flex items-center gap-3 px-4 py-3 bg-[#eafff5] text-teal-700 rounded-xl transition-colors">
                         📊 Dashboard
                     </Link>
-                    <Link to="/dashboard/admin/users" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl font-medium transition-colors">
+                    <Link to="/dashboard/admin/users" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl transition-colors">
                         👥 Manage Users
                     </Link>
-                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl font-medium transition-colors">
+                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl transition-colors">
                         🏥 Verify Facilities
                     </a>
-                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl font-medium transition-colors">
+                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl transition-colors">
                         ⚙️ System Settings
                     </a>
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">
-                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 bg-red-50 border border-red-500 hover:bg-red-100 hover:border-red-600 rounded-xl font-bold transition-colors">
+                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 bg-red-50 border border-red-500 hover:bg-red-100 hover:border-red-600 rounded-xl transition-colors">
                         Logout
                     </button>
                 </div>
@@ -104,47 +103,11 @@ const AdminDashboard = () => {
                     <div className="max-w-6xl mx-auto">
                         <h1 className="text-3xl font-bold text-slate-900 mb-8">System Overview</h1>
                         
-                        {/* Widgets Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                            <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm">
-                                <div className="text-slate-500 text-sm font-medium mb-2">Total Users</div>
-                                <div className="text-3xl font-bold text-slate-900">1,248</div>
-                                <div className="text-teal-600 text-sm font-medium mt-2">↑ 12% this week</div>
-                            </div>
-                            <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm">
-                                <div className="text-slate-500 text-sm font-medium mb-2">Pending Verifications</div>
-                                <div className="text-3xl font-bold text-slate-900">24</div>
-                                <div className="text-orange-500 text-sm font-medium mt-2">Requires attention</div>
-                            </div>
-                            <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm">
-                                <div className="text-slate-500 text-sm font-medium mb-2">Active Strays Reported</div>
-                                <div className="text-3xl font-bold text-slate-900">156</div>
-                                <div className="text-slate-400 text-sm font-medium mt-2">Across 12 regions</div>
-                            </div>
-                            <div className="bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm">
-                                <div className="text-slate-500 text-sm font-medium mb-2">System Health</div>
-                                <div className="text-3xl font-bold text-teal-600">99.9%</div>
-                                <div className="text-slate-400 text-sm font-medium mt-2">All services operational</div>
-                            </div>
-                        </div>
-
-                        {/* Large Placeholder Widget */}
-                        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-                            <h2 className="text-xl font-bold text-slate-900 mb-6">Recent System Activity</h2>
-                            <div className="space-y-4">
-                                {[1, 2, 3].map((item) => (
-                                    <div key={item} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">🔔</div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-slate-800">New Shelter Registration</p>
-                                                <p className="text-xs text-slate-500">Pawsitive Rescue submitted documents.</p>
-                                            </div>
-                                        </div>
-                                        <span className="text-xs text-slate-400">2h ago</span>
-                                    </div>
-                                ))}
-                            </div>
+                        {/* Empty State */}
+                        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                            <span className="text-4xl text-slate-300 mb-4">📭</span>
+                            <h3 className="text-lg font-medium text-slate-900 mb-1">No data available</h3>
+                            <p className="text-slate-500">System analytics and recent activity will appear here.</p>
                         </div>
                     </div>
                 </div>

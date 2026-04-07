@@ -41,21 +41,11 @@ const PharmacyDashboard = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-bold text-slate-900 mb-1">Stock Alerts</h3>
-                                <p className="text-slate-500 text-sm">3 essential medicines are running low.</p>
-                            </div>
-                            <div className="w-12 h-12 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center text-xl">⚠️</div>
-                        </div>
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-bold text-slate-900 mb-1">Prescription Requests</h3>
-                                <p className="text-slate-500 text-sm">8 new digital prescriptions received.</p>
-                            </div>
-                            <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-xl">📄</div>
-                        </div>
+                    {/* Empty State */}
+                    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                        <span className="text-4xl text-slate-300 mb-4">📭</span>
+                        <h3 className="text-lg font-medium text-slate-900 mb-1">All caught up</h3>
+                        <p className="text-slate-500">Stock alerts and prescription requests will appear here.</p>
                     </div>
                 </div>
             </main>

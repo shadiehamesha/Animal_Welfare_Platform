@@ -49,40 +49,11 @@ const UserDashboard = () => {
                         </button>
                     </div>
 
-                    {/* Widgets Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="w-12 h-12 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center text-xl mb-4">📋</div>
-                            <h3 className="text-lg font-bold text-slate-900 mb-1">My Reports</h3>
-                            <p className="text-slate-500 text-sm mb-4">You have 2 active reports.</p>
-                            <a href="#" className="text-teal-600 text-sm font-semibold hover:text-teal-700">View details &rarr;</a>
-                        </div>
-                        
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="w-12 h-12 bg-pink-50 text-pink-500 rounded-2xl flex items-center justify-center text-xl mb-4">❤️</div>
-                            <h3 className="text-lg font-bold text-slate-900 mb-1">Saved Pets</h3>
-                            <p className="text-slate-500 text-sm mb-4">4 pets looking for adoption.</p>
-                            <a href="#" className="text-teal-600 text-sm font-semibold hover:text-teal-700">View gallery &rarr;</a>
-                        </div>
-
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-xl mb-4">💬</div>
-                            <h3 className="text-lg font-bold text-slate-900 mb-1">Community</h3>
-                            <p className="text-slate-500 text-sm mb-4">3 new replies on your post.</p>
-                            <a href="#" className="text-teal-600 text-sm font-semibold hover:text-teal-700">Open forum &rarr;</a>
-                        </div>
-                    </div>
-
-                    {/* Wide Widget */}
-                    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8">
-                        <h2 className="text-xl font-bold text-slate-900 mb-6">Local Alerts Near You</h2>
-                        <div className="bg-[#fff8f1] border border-orange-100 p-5 rounded-2xl flex items-start gap-4">
-                            <span className="text-2xl mt-1">🚨</span>
-                            <div>
-                                <h4 className="font-bold text-orange-800 mb-1">Missing Golden Retriever</h4>
-                                <p className="text-orange-600 text-sm">Reported 2 miles away. Last seen near Central Park. Please keep an eye out!</p>
-                            </div>
-                        </div>
+                    {/* Empty State */}
+                    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                        <span className="text-4xl text-slate-300 mb-4">📭</span>
+                        <h3 className="text-lg font-medium text-slate-900 mb-1">Nothing to show yet</h3>
+                        <p className="text-slate-500">Your reports, saved pets, and local alerts will appear here.</p>
                     </div>
 
                 </div>

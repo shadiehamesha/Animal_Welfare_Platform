@@ -41,35 +41,11 @@ const HospitalDashboard = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
-                            <h2 className="text-xl font-bold text-slate-900 mb-6">Today's Appointments</h2>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                                    <div>
-                                        <p className="font-bold text-slate-800">Bella (Golden Retriever)</p>
-                                        <p className="text-sm text-slate-500">Routine Checkup</p>
-                                    </div>
-                                    <span className="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">10:00 AM</span>
-                                </div>
-                                <div className="flex items-center justify-between p-4 bg-red-50 rounded-2xl">
-                                    <div>
-                                        <p className="font-bold text-slate-800">Stray Cat #142</p>
-                                        <p className="text-sm text-red-600">Emergency / Rescue drop-off</p>
-                                    </div>
-                                    <span className="bg-red-200 text-red-900 text-xs font-bold px-3 py-1 rounded-full">11:30 AM</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="bg-[#eafff5] p-8 rounded-[2rem] border border-teal-100 shadow-sm flex flex-col items-center justify-center text-center">
-                            <div className="w-16 h-16 bg-white text-teal-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm">🩺</div>
-                            <h3 className="text-lg font-bold text-teal-900 mb-2">Available for Emergencies</h3>
-                            <p className="text-teal-700 text-sm mb-6">Your status is currently set to accepting emergency rescues.</p>
-                            <button className="bg-white text-teal-700 border border-teal-200 font-semibold py-2 px-6 rounded-full hover:bg-teal-50 transition-colors">
-                                Change Status
-                            </button>
-                        </div>
+                    {/* Empty State */}
+                    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                        <span className="text-4xl text-slate-300 mb-4">📭</span>
+                        <h3 className="text-lg font-medium text-slate-900 mb-1">No active appointments</h3>
+                        <p className="text-slate-500">Your upcoming appointments and emergency alerts will appear here.</p>
                     </div>
                 </div>
             </main>

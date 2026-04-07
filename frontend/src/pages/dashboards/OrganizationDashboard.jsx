@@ -8,7 +8,6 @@ const OrganizationDashboard = () => {
     const role = localStorage.getItem('role') || 'organizations/shelters';
 
     useEffect(() => {
-        // Same fetch logic
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (token) {
@@ -46,22 +45,11 @@ const OrganizationDashboard = () => {
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="text-slate-500 text-sm font-medium mb-2">Available Pets</div>
-                            <div className="text-4xl font-bold text-slate-900">42</div>
-                            <a href="#" className="inline-block mt-4 text-teal-600 text-sm font-semibold hover:text-teal-700">Manage listings &rarr;</a>
-                        </div>
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="text-slate-500 text-sm font-medium mb-2">Adoption Requests</div>
-                            <div className="text-4xl font-bold text-slate-900">15</div>
-                            <a href="#" className="inline-block mt-4 text-teal-600 text-sm font-semibold hover:text-teal-700">Review applications &rarr;</a>
-                        </div>
-                        <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="text-slate-500 text-sm font-medium mb-2">Upcoming Events</div>
-                            <div className="text-4xl font-bold text-slate-900">2</div>
-                            <a href="#" className="inline-block mt-4 text-teal-600 text-sm font-semibold hover:text-teal-700">Manage calendar &rarr;</a>
-                        </div>
+                    {/* Empty State */}
+                    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
+                        <span className="text-4xl text-slate-300 mb-4">📭</span>
+                        <h3 className="text-lg font-medium text-slate-900 mb-1">No activity yet</h3>
+                        <p className="text-slate-500">Adoption requests, events, and listed pets will appear here.</p>
                     </div>
                 </div>
             </main>
