@@ -28,6 +28,8 @@ import OrganizationDashboard from './pages/dashboards/OrganizationDashboard.jsx'
 import PharmacyDashboard from './pages/dashboards/PharmacyDashboard.jsx';
 import HospitalDashboard from './pages/dashboards/HospitalDashboard.jsx';
 import UserManagement from './pages/dashboards/UserManagement.jsx';
+import AdminContactManagement from './pages/dashboards/AdminContactManagement.jsx';
+
 function App() {
   return (
       <Routes>
@@ -66,6 +68,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['system admin']} />}>
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/dashboard/admin/users" element={<UserManagement />} />
+          <Route path="/dashboard/admin/contacts" element={<AdminContactManagement />} />
         </Route>
       </Routes>
   );

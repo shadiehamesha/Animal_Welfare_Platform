@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
+import UserContactWidget from '../../components/UserContactWidget.jsx';
 
 const PharmacyDashboard = () => {
     const [userName, setUserName] = useState('Pharmacy');
@@ -41,11 +42,8 @@ const PharmacyDashboard = () => {
                         </button>
                     </div>
 
-                    {/* Empty State */}
-                    <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-12 flex flex-col items-center justify-center text-center">
-                        <span className="text-4xl text-slate-300 mb-4">📭</span>
-                        <h3 className="text-lg font-medium text-slate-900 mb-1">All caught up</h3>
-                        <p className="text-slate-500">Stock alerts and prescription requests will appear here.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <UserContactWidget />
                     </div>
                 </div>
             </main>
