@@ -48,7 +48,7 @@ const Footer = () => {
             <ul className="flex flex-col gap-4 text-[15px]">
               <li className="flex items-center gap-3">
                 <FaEnvelope className="text-slate-300" />
-                <a href="mailto:hello@animalwelfare.com" className="hover:text-teal-600 transition-colors duration-200">hello@animalwelfare.com</a>
+                <a href="mailto:hello@meowoof.com" className="hover:text-teal-600 transition-colors duration-200">hello@meowoof.com</a>
               </li>
               <li className="flex flex-col gap-0">
                 <span>123 Pet Lover Lane</span>
