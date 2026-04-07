@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="flex flex-col gap-4 pr-4">
             <div className="flex items-center gap-3 text-white mb-2">
               <FaPaw className="text-xl text-slate-500" />
-              <span className="text-lg font-bold tracking-wide">meoWoof</span>
+              <span className="font-logo text-lg font-bold tracking-wide">meoWoof</span>
             </div>
             <p className="text-[15px] leading-relaxed">
               Building a compassionate community for every stray and pet. Join us in making the world a better place for animals.
@@ -64,7 +64,7 @@ const Footer = () => {
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-12">
             <span>© 2026</span>
             <span className="flex items-center gap-2">
-              meoWoof. Made with <FaHeart className="text-slate-400 text-sm mx-1" /> for animals.
+              <span className='font-logo'>meoWoof</span>  Made with <FaHeart className="text-slate-400 text-sm mx-1" /> for animals.
             </span>
           </div>
         </div>

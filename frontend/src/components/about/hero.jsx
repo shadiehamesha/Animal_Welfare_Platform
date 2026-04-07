@@ -42,7 +42,7 @@ const AboutHero = () => {
 
         {/* Sub-headline */}
         <p className="text-slate-500 text-lg md:text-xl max-w-3xl leading-relaxed mb-10 px-4">
-          We are a community-driven platform dedicated to connecting animals in need with people who care. From stray rescues to adoption, we're here to make a difference—one paw at a time.
+          We are a community driven platform dedicated to connecting animals in need with people who care. From stray rescues to adoption, we're here to make a difference one paw at a time.
         </p>
 
         {/* Action Buttons */}

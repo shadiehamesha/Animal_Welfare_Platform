@@ -131,7 +131,7 @@ const UserManagement = () => {
             {/* Sidebar - Bold fonts removed */}
             <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 z-30 transform transition-transform duration-300 md:relative md:translate-x-0 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="h-20 flex items-center px-8 border-b border-gray-100">
-                    <span className="text-xl text-teal-800 tracking-tight">🐾 meoWoof</span>
+                    <span className="font-logo text-3xl text-teal-800 tracking-tight">🐾 meoWoof</span>
                 </div>
                 
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">

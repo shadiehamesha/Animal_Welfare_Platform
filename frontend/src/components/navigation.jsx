@@ -46,7 +46,7 @@ const Navbar = () => {
           
           <div className="flex-shrink-0 flex items-center">
             <a href="/" className="flex items-center gap-2">
-              <span className="text-xl font-bold text-teal-800 tracking-tight">
+              <span className="font-logo text-3xl font-bold text-teal-800 tracking-tight">
                 🐾&nbsp;&nbsp;&nbsp;meoWoof
               </span>
             </a>
