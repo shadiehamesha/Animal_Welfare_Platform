@@ -27,7 +27,7 @@ import AdminDashboard from './pages/dashboards/AdminDashboard.jsx';
 import OrganizationDashboard from './pages/dashboards/OrganizationDashboard.jsx';
 import PharmacyDashboard from './pages/dashboards/PharmacyDashboard.jsx';
 import HospitalDashboard from './pages/dashboards/HospitalDashboard.jsx';
-
+import UserManagement from './pages/dashboards/UserManagement.jsx';
 function App() {
   return (
       <Routes>
@@ -65,6 +65,7 @@ function App() {
         {/* Admin Only Route */}
         <Route element={<ProtectedRoute allowedRoles={['system admin']} />}>
           <Route path="/dashboard/admin" element={<AdminDashboard />} />
+          <Route path="/dashboard/admin/users" element={<UserManagement />} />
         </Route>
       </Routes>
   );

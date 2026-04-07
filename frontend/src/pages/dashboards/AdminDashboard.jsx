@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Imported Link
 import { jwtDecode } from 'jwt-decode';
 
 const AdminDashboard = () => {
@@ -53,12 +53,13 @@ const AdminDashboard = () => {
                 </div>
                 
                 <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    <a href="#" className="flex items-center gap-3 px-4 py-3 bg-[#eafff5] text-teal-700 rounded-xl font-semibold transition-colors">
+                    {/* Replaced anchor tags with React Router Links */}
+                    <Link to="/dashboard/admin" className="flex items-center gap-3 px-4 py-3 bg-[#eafff5] text-teal-700 rounded-xl font-semibold transition-colors">
                         📊 Dashboard
-                    </a>
-                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl font-medium transition-colors">
+                    </Link>
+                    <Link to="/dashboard/admin/users" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl font-medium transition-colors">
                         👥 Manage Users
-                    </a>
+                    </Link>
                     <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl font-medium transition-colors">
                         🏥 Verify Facilities
                     </a>
