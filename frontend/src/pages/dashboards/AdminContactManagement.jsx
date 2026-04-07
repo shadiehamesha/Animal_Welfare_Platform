@@ -1,6 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import AdminSidebar from '../../components/AdminSidebar';
+
+const CustomDropdown = ({ value, options, onChange, triggerClassName, dropdownAlign = 'right' }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const selectedLabel = options.find(opt => opt.value === value)?.label || value;
+
+    return (
+        <div className="relative shrink-0" ref={dropdownRef}>
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`flex items-center justify-between gap-3 focus:outline-none transition-all duration-200 ${triggerClassName}`}
+            >
+                <span>{selectedLabel}</span>
+                <svg 
+                    className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} 
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            <div 
+                className={`absolute z-20 ${dropdownAlign === 'right' ? 'right-0' : 'left-0'} mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.05)] py-2 transition-all duration-200 origin-top ${
+                    isOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'
+                }`}
+            >
+                {options.map((option) => (
+                    <div
+                        key={option.value}
+                        onClick={() => {
+                            onChange(option.value);
+                            setIsOpen(false);
+                        }}
+                        className={`px-5 py-2.5 cursor-pointer text-sm transition-colors duration-150 flex items-center justify-between
+                            ${value === option.value 
+                                ? 'bg-teal-50/50 text-teal-700 font-bold' 
+                                : 'text-slate-600 hover:bg-gray-50 hover:text-teal-600 font-medium'
+                            }
+                        `}
+                    >
+                        {option.label}
+                        {value === option.value && (
+                            <svg className="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 
 const AdminContactManagement = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -92,6 +158,20 @@ const AdminContactManagement = () => {
         }
     };
 
+    // Dropdown Options
+    const filterOptions = [
+        { value: 'all', label: 'All Statuses' },
+        { value: 'pending', label: 'Pending' },
+        { value: 'reviewed', label: 'Reviewed' },
+        { value: 'resolved', label: 'Resolved' }
+    ];
+
+    const statusOptions = [
+        { value: 'pending', label: 'Pending' },
+        { value: 'reviewed', label: 'Reviewed' },
+        { value: 'resolved', label: 'Resolved' }
+    ];
+
     return (
         <div className="flex h-screen bg-[#f9fdfc] font-sans overflow-hidden">
             <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
@@ -119,26 +199,23 @@ const AdminContactManagement = () => {
 
                         {/* Filters & Search */}
                         <div className="flex flex-col md:flex-row gap-4 mb-6">
-                            <div className="flex-1 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center">
+                            <div className="flex-1 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm flex items-center focus-within:border-teal-500 focus-within:ring-1 focus-within:ring-teal-500 transition-all">
                                 <span className="text-xl pl-3 pr-2 text-slate-400">🔍</span>
                                 <input 
                                     type="text" 
                                     placeholder="Search by User ID, Subject, or Message..." 
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full focus:outline-none text-slate-700 placeholder-slate-400 py-2"
+                                    className="w-full focus:outline-none text-slate-700 placeholder-slate-400 py-2 bg-transparent"
                                 />
                             </div>
-                            <select 
+                            
+                            <CustomDropdown 
                                 value={filterStatus}
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                className="bg-white border border-gray-100 shadow-sm text-slate-700 rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-teal-500/20 font-medium"
-                            >
-                                <option value="all">All Statuses</option>
-                                <option value="pending">Pending</option>
-                                <option value="reviewed">Reviewed</option>
-                                <option value="resolved">Resolved</option>
-                            </select>
+                                options={filterOptions}
+                                onChange={(val) => setFilterStatus(val)}
+                                triggerClassName="w-full md:w-48 bg-white border border-gray-100 shadow-sm text-slate-700 rounded-2xl px-5 py-4 font-medium hover:border-teal-400 transition-colors"
+                            />
                         </div>
 
                         {/* Messages Grid */}
@@ -155,18 +232,15 @@ const AdminContactManagement = () => {
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <select
+                                            <CustomDropdown 
                                                 value={msg.status}
-                                                onChange={(e) => handleStatusChange(msg._id, e.target.value)}
-                                                className={`text-sm font-bold border rounded-full px-4 py-2 cursor-pointer focus:outline-none ${getStatusColor(msg.status)}`}
-                                            >
-                                                <option value="pending">Pending</option>
-                                                <option value="reviewed">Reviewed</option>
-                                                <option value="resolved">Resolved</option>
-                                            </select>
+                                                options={statusOptions}
+                                                onChange={(val) => handleStatusChange(msg._id, val)}
+                                                triggerClassName={`text-sm font-bold border rounded-full px-4 py-2 hover:opacity-80 ${getStatusColor(msg.status)}`}
+                                            />
                                             <button 
                                                 onClick={() => handleDelete(msg._id)}
-                                                className="text-red-500 hover:text-red-700 font-medium bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full transition-colors text-sm"
+                                                className="text-red-500 hover:text-red-700 font-medium bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full transition-colors text-sm shrink-0"
                                             >
                                                 Delete
                                             </button>
@@ -176,7 +250,7 @@ const AdminContactManagement = () => {
                                 </div>
                             ))}
                             {filteredMessages.length === 0 && (
-                                <div className="text-center py-12 bg-white rounded-[2rem] border border-gray-100">
+                                <div className="text-center py-12 bg-white rounded-[2rem] border border-gray-100 shadow-sm">
                                     <span className="text-4xl">📭</span>
                                     <p className="text-slate-500 mt-4 font-medium">No messages found.</p>
                                 </div>
