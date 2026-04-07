@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import UserModal from '../../components/modals/UserModal';
+import AdminSidebar from '../../components/AdminSidebar';
 
 const UserManagement = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,7 +14,6 @@ const UserManagement = () => {
     
     const usersPerPage = 8;
     const role = localStorage.getItem('role') || 'system admin';
-    const navigate = useNavigate();
 
     // Fetch Admin Data & Users
     useEffect(() => {
@@ -49,12 +48,6 @@ const UserManagement = () => {
                 setUsers(data);
             }
         } catch (error) { console.error("Error fetching users:", error); }
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('role');
-        navigate('/login');
     };
 
     // CRUD Operations
@@ -123,38 +116,10 @@ const UserManagement = () => {
     return (
         <div className="flex h-screen bg-[#f9fdfc] font-sans overflow-hidden">
             
-            {/* Sidebar Overlay */}
-            {isSidebarOpen && (
-                <div className="fixed inset-0 bg-slate-900/50 z-20 md:hidden" onClick={() => setIsSidebarOpen(false)} />
-            )}
-
-            {/* Sidebar - Bold fonts removed */}
-            <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 z-30 transform transition-transform duration-300 md:relative md:translate-x-0 flex flex-col ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="h-20 flex items-center px-8 border-b border-gray-100">
-                    <span className="font-logo text-3xl text-teal-800 tracking-tight">🐾 meoWoof</span>
-                </div>
-                
-                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    <Link to="/dashboard/admin" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl transition-colors">
-                        📊 Dashboard
-                    </Link>
-                    <Link to="/dashboard/admin/users" className="flex items-center gap-3 px-4 py-3 bg-[#eafff5] text-teal-700 rounded-xl transition-colors">
-                        👥 Manage Users
-                    </Link>
-                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl transition-colors">
-                        🏥 Verify Facilities
-                    </a>
-                    <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-gray-50 hover:text-teal-600 rounded-xl transition-colors">
-                        ⚙️ System Settings
-                    </a>
-                </nav>
-
-                <div className="p-4 border-t border-gray-100">
-                    <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 bg-red-50 border border-red-500 hover:bg-red-100 hover:border-red-600 rounded-xl transition-colors">
-                        Logout
-                    </button>
-                </div>
-            </aside>
+            <AdminSidebar 
+                isOpen={isSidebarOpen} 
+                onClose={() => setIsSidebarOpen(false)} 
+            />
 
             {/* Main Content Area */}
             <main className="flex-1 flex flex-col h-full overflow-hidden">
