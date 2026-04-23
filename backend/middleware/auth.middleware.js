@@ -42,3 +42,12 @@ export const admin = (req, res, next) => {
         res.status(403).json({ message: 'Not authorized as system admin' });
     }
 };
+
+// Hospital Manager routes - checks role
+export const hospitalManager = (req, res, next) => {
+    if (req.user && (req.user.role === 'hospitals/veterinarians' || req.user.role === 'system admin')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Not authorized as hospital manager' });
+    }
+};

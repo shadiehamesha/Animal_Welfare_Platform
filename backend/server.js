@@ -5,6 +5,7 @@ import cors from 'cors';
 import { connectDB } from './config/db.js';
 import userRoutes from './routes/user.route.js';
 import contactRoutes from './routes/contact.route.js';
+import hospitalRoutes from './routes/hospital.route.js';
 
 // Load environment variables
 dotenv.config();
@@ -23,6 +24,7 @@ app.use(cors());
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use('/api/hospitals', hospitalRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

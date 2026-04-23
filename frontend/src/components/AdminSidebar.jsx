@@ -36,8 +36,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                         to="/dashboard/admin" 
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                             isActive('/dashboard/admin') 
-                                ? 'bg-[#eafff5] text-teal-700' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600'
+                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
+                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
                         📊 Dashboard
@@ -46,18 +46,28 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                         to="/dashboard/admin/users" 
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                             isActive('/dashboard/admin/users') 
-                                ? 'bg-[#eafff5] text-teal-700' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600'
+                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
+                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
                         👥 Manage Users
                     </Link>
                     <Link 
+                        to="/dashboard/admin/hospitals" 
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                            isActive('/dashboard/admin/hospitals') 
+                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
+                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
+                        }`}
+                    >
+                        🏥 Manage Hospitals
+                    </Link>
+                    <Link 
                         to="/dashboard/admin/contacts" 
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                         isActive('/dashboard/admin/contacts') 
-                                ? 'bg-[#eafff5] text-teal-700' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600'
+                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
+                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
                         ✉️ Manage Messages
@@ -67,7 +77,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 <div className="p-4 border-t border-gray-100 shrink-0">
                     <button 
                         onClick={handleLogout} 
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 bg-red-50 border border-red-500 hover:bg-red-100 hover:border-red-600 rounded-xl transition-colors"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 bg-red-50 border border-red-500 hover:bg-red-100 hover:border-red-600 rounded-xl transition-colors font-bold"
                     >
                         Logout
                     </button>
