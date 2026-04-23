@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { FaPaw, FaChartPie, FaUsers, FaHospital, FaEnvelope } from 'react-icons/fa';
 
 const AdminSidebar = ({ isOpen, onClose }) => {
     const location = useLocation();
@@ -26,8 +27,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
             {/* Sidebar */}
             <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 z-30 transform transition-transform duration-300 md:relative md:translate-x-0 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="h-20 flex items-center px-8 border-b border-gray-100 shrink-0">
-                    <Link to="/" className="font-logo text-3xl text-teal-800 tracking-tight hover:opacity-80 transition-opacity">
-                        🐾 meoWoof
+                    <Link to="/" className="font-logo text-3xl text-teal-800 tracking-tight hover:opacity-80 transition-opacity flex items-center gap-2">
+                        <FaPaw className="text-2xl" /> meoWoof
                     </Link>
                 </div>
                 
@@ -40,7 +41,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                                 : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
-                        📊 Dashboard
+                        <FaChartPie className="text-lg" /> Dashboard
                     </Link>
                     <Link 
                         to="/dashboard/admin/users" 
@@ -50,7 +51,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                                 : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
-                        👥 Manage Users
+                        <FaUsers className="text-lg" /> Manage Users
                     </Link>
                     <Link 
                         to="/dashboard/admin/hospitals" 
@@ -60,7 +61,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                                 : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
-                        🏥 Manage Hospitals
+                        <FaHospital className="text-lg" /> Manage Hospitals
                     </Link>
                     <Link 
                         to="/dashboard/admin/contacts" 
@@ -70,7 +71,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                                 : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
                         }`}
                     >
-                        ✉️ Manage Messages
+                        <FaEnvelope className="text-lg" /> Manage Messages
                     </Link>
                 </nav>
 

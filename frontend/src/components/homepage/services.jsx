@@ -82,31 +82,24 @@ const Services = () => {
           
           {/* Mapping through the data array to create repeating cards */}
           {serviceLinks.map((service, index) => (
-            <div 
+            <a 
               key={index} 
-              className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full"
+              href={service.link}
+              className="group bg-white rounded-3xl p-8 border border-gray-100 shadow-sm hover:shadow-md hover:border-teal-100 transition-all duration-300 flex flex-col h-full cursor-pointer block"
             >
               {/* Icon Container */}
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-6 ${service.iconBg}`}>
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-6 ${service.iconBg} group-hover:scale-110 transition-transform duration-300`}>
                 {service.icon}
               </div>
 
               {/* Text Content */}
-              <h3 className="text-[1.15rem] font-bold text-slate-900 mb-3">
+              <h3 className="text-[1.15rem] font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors duration-300">
                 {service.title}
               </h3>
-              <p className="text-slate-500 text-[15px] leading-relaxed mb-8 flex-grow">
+              <p className="text-slate-500 text-[15px] leading-relaxed flex-grow">
                 {service.description}
               </p>
-
-              {/* Link */}
-              <a 
-                href={service.link} 
-                className="text-teal-600 font-semibold text-[15px] flex items-center gap-2 hover:text-teal-700 transition-colors w-max"
-              >
-                Learn more <span aria-hidden="true">&rarr;</span>
-              </a>
-            </div>
+            </a>
           ))}
 
         </div>
