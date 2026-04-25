@@ -194,3 +194,20 @@ export const deleteHospitalReview = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+// @desc    Delete a hospital completely
+// @route   DELETE /api/hospitals/:id
+// @access  Private/Admin
+export const deleteHospital = async (req, res) => {
+    try {
+        const hospital = await Hospital.findByIdAndDelete(req.params.id);
+        
+        if (!hospital) {
+            return res.status(404).json({ message: 'Hospital not found' });
+        }
+        
+        res.status(200).json({ message: 'Hospital deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};

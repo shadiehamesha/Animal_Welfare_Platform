@@ -1,6 +1,6 @@
 import express from 'express';
-import { getHospitals, getHospitalById, createHospital, updateHospital, addHospitalReview, respondToReview, deleteHospitalReview } from '../controllers/hospital.controller.js';
-import { protect, hospitalManager } from '../middleware/auth.middleware.js';
+import { getHospitals, getHospitalById, createHospital, updateHospital, addHospitalReview, respondToReview, deleteHospitalReview, deleteHospital } from '../controllers/hospital.controller.js';
+import { protect, hospitalManager, admin } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
@@ -16,5 +16,8 @@ router.post('/', protect, hospitalManager, createHospital);
 router.put('/:id', protect, hospitalManager, updateHospital);
 router.put('/:id/reviews/:reviewId/respond', protect, hospitalManager, respondToReview);
 router.delete('/:id/reviews/:reviewId', protect, hospitalManager, deleteHospitalReview);
+
+// Admin Only Routes
+router.delete('/:id', protect, admin, deleteHospital);
 
 export default router;
