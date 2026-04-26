@@ -6,6 +6,10 @@ import { connectDB } from './config/db.js';
 import userRoutes from './routes/user.route.js';
 import contactRoutes from './routes/contact.route.js';
 import hospitalRoutes from './routes/hospital.route.js';
+import organizationRoutes from './routes/organization.route.js';
+import petRoutes from './routes/pet.route.js';
+import eventRoutes from './routes/event.route.js';
+import taskRoutes from './routes/task.route.js';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +29,10 @@ app.use(cors());
 app.use('/api/users', userRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/hospitals', hospitalRoutes);
+app.use('/api/organizations', organizationRoutes);
+app.use('/api/pets', petRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

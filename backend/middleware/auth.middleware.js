@@ -51,3 +51,12 @@ export const hospitalManager = (req, res, next) => {
         res.status(403).json({ message: 'Not authorized as hospital manager' });
     }
 };
+
+// Organization/Shelter Manager routes - checks role
+export const shelterManager = (req, res, next) => {
+    if (req.user && (req.user.role === 'organizations/shelters' || req.user.role === 'system admin')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Not authorized as organization/shelter manager' });
+    }
+};

@@ -30,6 +30,8 @@ import HospitalDashboard from './pages/dashboards/HospitalDashboard.jsx';
 import UserManagement from './pages/dashboards/UserManagement.jsx';
 import AdminContactManagement from './pages/dashboards/AdminContactManagement.jsx';
 import AdminHospitalManagement from './pages/dashboards/AdminHospitalManagement.jsx';
+import AdminOrganizationManagement from './pages/dashboards/AdminOrganizationManagement.jsx';
+
 
 function App() {
   return (
@@ -71,6 +73,7 @@ function App() {
           <Route path="/dashboard/admin/users" element={<UserManagement />} />
           <Route path="/dashboard/admin/contacts" element={<AdminContactManagement />} />
           <Route path="/dashboard/admin/hospitals" element={<AdminHospitalManagement />} />
+          <Route path="/dashboard/admin/organizations" element={<AdminOrganizationManagement />} />
         </Route>
       </Routes>
   );

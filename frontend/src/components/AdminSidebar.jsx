@@ -1,9 +1,8 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaPaw, FaChartPie, FaUsers, FaHospital, FaEnvelope } from 'react-icons/fa';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { FaHome, FaUsers, FaHospital, FaBuilding, FaEnvelope, FaSignOutAlt, FaPaw } from 'react-icons/fa';
 
-const AdminSidebar = ({ isOpen, onClose }) => {
-    const location = useLocation();
+const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -12,78 +11,81 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         navigate('/login');
     };
 
-    const isActive = (path) => location.pathname === path;
+    const navLinks = [
+        { path: '/dashboard/admin', name: 'Overview', icon: <FaHome /> },
+        { path: '/dashboard/admin/users', name: 'Users', icon: <FaUsers /> },
+        { path: '/dashboard/admin/organizations', name: 'Organizations', icon: <FaBuilding /> },
+        { path: '/dashboard/admin/hospitals', name: 'Hospitals', icon: <FaHospital /> },
+        { path: '/dashboard/admin/contacts', name: 'Messages', icon: <FaEnvelope /> },
+    ];
+
+    const sidebarContent = (
+        <div className="h-full flex flex-col bg-white border-r border-gray-100 shadow-sm w-64">
+            
+            {/* Logo Area */}
+            <div className="h-20 flex items-center px-8 border-b border-gray-100 shrink-0">
+                <div className="flex items-center gap-3 text-teal-600">
+                    <FaPaw className="text-3xl" />
+                    <span className="text-xl font-black tracking-tight text-slate-900">AdminPanel</span>
+                </div>
+            </div>
+
+            {/* Navigation Links */}
+            <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-2 custom-scrollbar">
+                <p className="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Management</p>
+                
+                {navLinks.map((link) => (
+                    <NavLink
+                        key={link.path}
+                        to={link.path}
+                        end={link.path === '/dashboard/admin'}
+                        onClick={() => setIsMobileOpen && setIsMobileOpen(false)}
+                        className={({ isActive }) => `
+                            flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all duration-200
+                            ${isActive 
+                                ? 'bg-teal-50 text-teal-700 shadow-sm' 
+                                : 'text-slate-500 hover:bg-gray-50 hover:text-slate-900'
+                            }
+                        `}
+                    >
+                        <span className="text-lg">{link.icon}</span>
+                        <span>{link.name}</span>
+                    </NavLink>
+                ))}
+            </nav>
+
+            {/* Bottom Actions */}
+            <div className="p-4 border-t border-gray-100 shrink-0">
+                <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                >
+                    <FaSignOutAlt className="text-lg" />
+                    <span>Log Out</span>
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <>
+            {/* Desktop Sidebar */}
+            <div className="hidden lg:block h-screen sticky top-0">
+                {sidebarContent}
+            </div>
+
             {/* Mobile Sidebar Overlay */}
-            {isOpen && (
-                <div 
-                    className="fixed inset-0 bg-slate-900/50 z-20 md:hidden" 
-                    onClick={onClose} 
-                />
+            {isMobileOpen && (
+                <div className="fixed inset-0 z-50 lg:hidden flex">
+                    <div 
+                        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
+                        onClick={() => setIsMobileOpen(false)}
+                    />
+                    <div className="relative w-64 max-w-sm h-full flex flex-col shadow-2xl transform transition-transform">
+                        {sidebarContent}
+                    </div>
+                </div>
             )}
-
-            {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-100 z-30 transform transition-transform duration-300 md:relative md:translate-x-0 flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="h-20 flex items-center px-8 border-b border-gray-100 shrink-0">
-                    <Link to="/" className="font-logo text-3xl text-teal-800 tracking-tight hover:opacity-80 transition-opacity flex items-center gap-2">
-                        <FaPaw className="text-2xl" /> meoWoof
-                    </Link>
-                </div>
-                
-                <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                    <Link 
-                        to="/dashboard/admin" 
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                            isActive('/dashboard/admin') 
-                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
-                        }`}
-                    >
-                        <FaChartPie className="text-lg" /> Dashboard
-                    </Link>
-                    <Link 
-                        to="/dashboard/admin/users" 
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                            isActive('/dashboard/admin/users') 
-                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
-                        }`}
-                    >
-                        <FaUsers className="text-lg" /> Manage Users
-                    </Link>
-                    <Link 
-                        to="/dashboard/admin/hospitals" 
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                            isActive('/dashboard/admin/hospitals') 
-                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
-                        }`}
-                    >
-                        <FaHospital className="text-lg" /> Manage Hospitals
-                    </Link>
-                    <Link 
-                        to="/dashboard/admin/contacts" 
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                        isActive('/dashboard/admin/contacts') 
-                                ? 'bg-[#eafff5] text-teal-700 font-bold' 
-                                : 'text-slate-500 hover:bg-gray-50 hover:text-teal-600 font-medium'
-                        }`}
-                    >
-                        <FaEnvelope className="text-lg" /> Manage Messages
-                    </Link>
-                </nav>
-
-                <div className="p-4 border-t border-gray-100 shrink-0">
-                    <button 
-                        onClick={handleLogout} 
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 bg-red-50 border border-red-500 hover:bg-red-100 hover:border-red-600 rounded-xl transition-colors font-bold"
-                    >
-                        Logout
-                    </button>
-                </div>
-            </aside>
         </>
     );
 };
