@@ -10,6 +10,7 @@ import organizationRoutes from './routes/organization.route.js';
 import petRoutes from './routes/pet.route.js';
 import eventRoutes from './routes/event.route.js';
 import taskRoutes from './routes/task.route.js';
+import reportRoutes from './routes/report.route.js';
 
 // Load environment variables
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

@@ -6,6 +6,7 @@ import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
 import ModernTimePicker from '../../utils/ModernTimePicker.jsx';
+import HeatmapWidget from '../../components/HeatmapWidget.jsx';
 
 // ---- Main Dashboard Component ----
 const HospitalDashboard = () => {
@@ -187,21 +188,27 @@ const HospitalDashboard = () => {
                             
                             {/* Tabs */}
                             {hospital && !isEditing && (
-                                <div className="flex border-b border-gray-100 bg-gray-50/50">
+                                <div className="flex border-b border-gray-100 bg-gray-50/50 overflow-x-auto">
                                     <button 
                                         onClick={() => setActiveTab('profile')} 
-                                        className={`flex-1 py-4 font-bold text-sm transition-colors border-b-2 ${activeTab === 'profile' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                                        className={`flex-1 py-4 px-4 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'profile' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
                                     >
                                         Clinic Profile
                                     </button>
                                     <button 
                                         onClick={() => setActiveTab('reviews')} 
-                                        className={`flex-1 py-4 font-bold text-sm transition-colors border-b-2 flex items-center justify-center gap-2 ${activeTab === 'reviews' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                                        className={`flex-1 py-4 px-4 font-bold text-sm transition-colors border-b-2 flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'reviews' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
                                     >
                                         Manage Reviews
                                         {hospital.reviews?.length > 0 && (
                                             <span className="bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full text-xs">{hospital.reviews.length}</span>
                                         )}
+                                    </button>
+                                    <button 
+                                        onClick={() => setActiveTab('analytics')} 
+                                        className={`flex-1 py-4 px-4 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'analytics' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                                    >
+                                        Geospatial Analytics
                                     </button>
                                 </div>
                             )}
@@ -463,6 +470,21 @@ const HospitalDashboard = () => {
                                                 <p className="text-slate-500 mt-4 font-medium">No reviews yet.</p>
                                             </div>
                                         )}
+                                    </div>
+                                )}
+
+                                {/* ANALYTICS TAB */}
+                                {activeTab === 'analytics' && hospital && (
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-center mb-4 border-b border-gray-50 pb-4">
+                                            <h2 className="text-xl font-bold text-slate-900">Density Heatmap</h2>
+                                        </div>
+                                        <p className="text-slate-500 text-sm mb-4">
+                                            Geospatial analytics of reported stray animals to help clinics anticipate local needs and optimize resource allocation.
+                                        </p>
+                                        <div className="w-full min-h-[400px]">
+                                            <HeatmapWidget token={localStorage.getItem('token')} />
+                                        </div>
                                     </div>
                                 )}
                             </div>

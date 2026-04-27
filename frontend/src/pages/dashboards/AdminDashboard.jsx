@@ -2,22 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { Link } from 'react-router-dom';
 import AdminSidebar from '../../components/AdminSidebar';
+import HeatmapWidget from '../../components/HeatmapWidget';
 
 const AdminDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [userName, setUserName] = useState('Admin');
     const [recentMessages, setRecentMessages] = useState([]);
+    const [token, setToken] = useState('');
     const role = localStorage.getItem('role') || 'system admin';
+
+    // State for platform metrics initialized to 0
+    const [metrics, setMetrics] = useState({
+        totalReports: 0,
+        activeCases: 0,
+        resolvedCases: 0,
+        partnerHospitals: 0
+    });
 
     useEffect(() => {
         const fetchData = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
+            const storedToken = localStorage.getItem('token');
+            if (storedToken) {
+                setToken(storedToken); // Save token to state for the HeatmapWidget
                 try {
                     // Fetch User info
-                    const decoded = jwtDecode(token);
+                    const decoded = jwtDecode(storedToken);
                     const userRes = await fetch(`http://localhost:5000/api/users/${decoded.id}`, {
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: { Authorization: `Bearer ${storedToken}` }
                     });
                     if (userRes.ok) {
                         const userData = await userRes.json();
@@ -26,12 +37,28 @@ const AdminDashboard = () => {
 
                     // Fetch Recent Messages
                     const msgRes = await fetch('http://localhost:5000/api/contacts', {
-                        headers: { Authorization: `Bearer ${token}` }
+                        headers: { Authorization: `Bearer ${storedToken}` }
                     });
                     if (msgRes.ok) {
                         const msgData = await msgRes.json();
                         setRecentMessages(msgData.slice(0, 3)); // Get only top 3
                     }
+
+                    // Fetch Real Dynamic Metrics
+                    const hospRes = await fetch('http://localhost:5000/api/hospitals');
+                    const hospitals = hospRes.ok ? await hospRes.json() : [];
+
+                    const repRes = await fetch('http://localhost:5000/api/reports/public');
+                    const reports = repRes.ok ? await repRes.json() : [];
+
+                    // Update metrics state with actual data from DB
+                    setMetrics({
+                        totalReports: reports.length, 
+                        activeCases: reports.length, 
+                        resolvedCases: 0, // This can be updated when a resolved endpoint is implemented
+                        partnerHospitals: hospitals.length || 0
+                    });
+
                 } catch (error) {
                     console.error("Failed to fetch data", error);
                 }
@@ -74,12 +101,59 @@ const AdminDashboard = () => {
 
                 {/* Dashboard Content */}
                 <div className="flex-1 overflow-y-auto p-6 lg:p-10">
-                    <div className="max-w-6xl mx-auto">
-                        <h1 className="text-3xl font-bold text-slate-900 mb-8">System Overview</h1>
+                    <div className="max-w-7xl mx-auto space-y-8">
                         
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <header>
+                            <h1 className="text-3xl font-bold text-slate-900">System Overview</h1>
+                            <p className="text-slate-500 mt-1">Monitor platform activity and stray animal reports.</p>
+                        </header>
+
+                        {/* Key Metrics Section */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-center">
+                                <span className="text-slate-500 text-sm font-medium mb-1">Total Reports</span>
+                                <span className="text-3xl font-bold text-teal-600">{metrics.totalReports}</span>
+                            </div>
+                            
+                            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-center">
+                                <span className="text-slate-500 text-sm font-medium mb-1">Active Cases</span>
+                                <span className="text-3xl font-bold text-yellow-600">{metrics.activeCases}</span>
+                            </div>
+                            
+                            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-center">
+                                <span className="text-slate-500 text-sm font-medium mb-1">Resolved Cases</span>
+                                <span className="text-3xl font-bold text-slate-700">{metrics.resolvedCases}</span>
+                            </div>
+                            
+                            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-center">
+                                <span className="text-slate-500 text-sm font-medium mb-1">Partner Hospitals</span>
+                                <span className="text-3xl font-bold text-blue-600">{metrics.partnerHospitals}</span>
+                            </div>
+                        </div>
+
+                        {/* Main Content Grid: Heatmap & Messages */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            
+                            {/* Geospatial Analytics Section (Takes up 2 columns on large screens) */}
+                            <div className="lg:col-span-2 bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
+                                <div className="mb-6">
+                                    <h2 className="text-xl font-bold text-slate-900">Geospatial Analytics</h2>
+                                    <p className="text-slate-500 text-sm mt-1">Density mapping of reported stray animals to optimize resource allocation.</p>
+                                </div>
+                                
+                                <div className="flex-1 min-h-[400px]">
+                                    {token ? (
+                                        <HeatmapWidget token={token} />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center rounded-[2rem] bg-slate-50 text-slate-500">
+                                            <span className="font-medium">Authenticating...</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
                             {/* Recent Messages Widget */}
-                            <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 flex flex-col h-full">
+                            <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-6 md:p-8 flex flex-col h-full">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="text-xl font-bold text-slate-900">Recent Messages</h2>
                                     <Link to="/dashboard/admin/contacts" className="text-teal-600 text-sm font-semibold hover:text-teal-700">
@@ -88,7 +162,7 @@ const AdminDashboard = () => {
                                 </div>
                                 
                                 {recentMessages.length > 0 ? (
-                                    <div className="space-y-4">
+                                    <div className="space-y-4 flex-1">
                                         {recentMessages.map(msg => (
                                             <div key={msg._id} className="p-4 border border-gray-50 bg-gray-50/50 rounded-2xl flex justify-between items-center">
                                                 <div className="truncate pr-4">
@@ -112,6 +186,7 @@ const AdminDashboard = () => {
                                     </div>
                                 )}
                             </div>
+
                         </div>
                     </div>
                 </div>

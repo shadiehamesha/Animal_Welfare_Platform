@@ -11,6 +11,7 @@ import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
 import ModernTimePicker from '../../utils/ModernTimePicker.jsx';
 import ModernDatePicker from '../../utils/ModernDatePicker.jsx';
+import HeatmapWidget from '../../components/HeatmapWidget.jsx';
 
 // --- Custom Dropdown Component ---
 const CustomSelect = ({ name, value, options, onChange, required = false }) => {
@@ -511,6 +512,15 @@ const OrganizationDashboard = () => {
                                             </div>
                                         </div>
 
+                                        {/* Added Geospatial Heatmap Widget */}
+                                        <div className="border-t border-gray-100 pt-8 mt-8">
+                                            <h2 className="text-xl font-bold text-slate-900 mb-4">Geospatial Analytics</h2>
+                                            <p className="text-slate-500 text-sm mb-6">Density mapping of reported stray animals to help target rescue operations and resource allocation.</p>
+                                            <div className="min-h-[400px] w-full">
+                                                <HeatmapWidget token={localStorage.getItem('token')} />
+                                            </div>
+                                        </div>
+
                                         <div className="border-t border-gray-100 pt-8">
                                             <h2 className="text-xl font-bold text-slate-900 mb-6">Support & Communications</h2>
                                             <div className="max-w-md">
@@ -849,7 +859,6 @@ const OrganizationDashboard = () => {
                                 </div>
                                 <div>
                                     <label className={labelClasses}>Date *</label>
-                                    {/* Replaced native date input with ModernDatePicker */}
                                     <ModernDatePicker name="date" value={eventForm.date} onChange={(e) => setEventForm({...eventForm, date: e.target.value})} />
                                 </div>
                                 <div>
