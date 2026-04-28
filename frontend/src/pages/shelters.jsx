@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, AdvancedMarker, Pin, useMap } from "@vis.gl/react-google-maps";
 import { FaMapMarkerAlt, FaPhone, FaTimes, FaSearch, FaEnvelope, FaGlobe, FaCalendarAlt, FaPaw, FaHandsHelping } from "react-icons/fa";
 import Navbar from "../components/navigation";
 import Footer from "../components/footer";
+
+// Helper component to pan the map 
+const MapUpdater = ({ center, zoom }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (map && center) {
+            map.panTo(center);
+            map.setZoom(zoom);
+        }
+    }, [map, center, zoom]);
+    return null;
+};
 
 const Shelters = () => {
     const [shelters, setShelters] = useState([]);
@@ -84,7 +96,7 @@ const Shelters = () => {
         setActiveTab('profile');
         setIsModalOpen(true);
         setIsLoadingData(true);
-
+        
         try {
             // Fetch associated public data for this shelter concurrently
             const [petsRes, eventsRes, tasksRes] = await Promise.all([
@@ -168,12 +180,12 @@ const Shelters = () => {
                     <APIProvider apiKey={MAPS_API_KEY}>
                         <Map
                             defaultCenter={mapCenter}
-                            center={mapCenter}
                             defaultZoom={mapZoom}
-                            zoom={mapZoom}
                             mapId="SHELTER_DIRECTORY_MAP"
                             gestureHandling={'greedy'}
                         >
+                            <MapUpdater center={mapCenter} zoom={mapZoom} />
+
                             {filteredShelters.map((shelter) => (
                                 shelter.location && (
                                     <AdvancedMarker 
@@ -184,7 +196,8 @@ const Shelters = () => {
                                     >
                                         <div className="relative group">
                                             <div className="bg-[#0d9488] text-white px-4 py-2 rounded-full font-bold shadow-lg text-sm border-[3px] border-white group-hover:bg-teal-700 transition-colors whitespace-nowrap flex items-center gap-2">
-                                                <FaPaw /> {shelter.organizationName}
+                                                <FaPaw />
+                                                {shelter.organizationName}
                                             </div>
                                             <div className="absolute left-1/2 -bottom-2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-white"></div>
                                         </div>
@@ -304,7 +317,7 @@ const Shelters = () => {
                                                         )}
                                                     </div>
                                                 </div>
-
+                                                
                                                 <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
                                                     <h3 className="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider flex items-center gap-2">
                                                         <FaMapMarkerAlt /> Location
@@ -323,7 +336,7 @@ const Shelters = () => {
                                                 <h3 className="text-xl font-bold text-slate-900">Meet Our Animals</h3>
                                                 <span className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-bold">{shelterPets.length} Available</span>
                                             </div>
-                                            
+
                                             {shelterPets.length > 0 ? (
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                                     {shelterPets.map(pet => (
@@ -429,7 +442,7 @@ const Shelters = () => {
                     </div>
                 </div>
             )}
-            
+
             <style dangerouslySetInnerHTML={{__html: `
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }

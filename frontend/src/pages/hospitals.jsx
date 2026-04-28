@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, AdvancedMarker, useMap } from "@vis.gl/react-google-maps";
 import { FaStar, FaMapMarkerAlt, FaClock, FaPhone, FaTimes, FaSearch, FaReply } from "react-icons/fa";
 import Navbar from "../components/navigation";
 import Footer from "../components/footer";
+
+// Helper component to pan the map 
+const MapUpdater = ({ center, zoom }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (map && center) {
+            map.panTo(center);
+            map.setZoom(zoom);
+        }
+    }, [map, center, zoom]);
+    return null;
+};
 
 const Hospitals = () => {
     const [hospitals, setHospitals] = useState([]);
@@ -199,12 +211,12 @@ const Hospitals = () => {
                     <APIProvider apiKey={MAPS_API_KEY}>
                         <Map
                             defaultCenter={mapCenter}
-                            center={mapCenter}
                             defaultZoom={mapZoom}
-                            zoom={mapZoom}
                             mapId="HOSPITAL_DIRECTORY_MAP"
                             gestureHandling={'greedy'}
                         >
+                            <MapUpdater center={mapCenter} zoom={mapZoom} />
+                            
                             {filteredHospitals.map((hospital) => (
                                 <AdvancedMarker 
                                     key={hospital._id} 
@@ -338,19 +350,17 @@ const Hospitals = () => {
                                 {isLoggedIn ? (
                                     <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
                                         <h4 className="font-bold text-slate-900 mb-4">Write a Review</h4>
-                                        
                                         {reviewStatus.success && (
                                             <div className="bg-green-50 text-green-700 p-3 rounded-xl mb-4 text-sm font-medium border border-green-200">Review submitted successfully!</div>
                                         )}
                                         {reviewStatus.error && (
                                             <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-sm font-medium border border-red-200">{reviewStatus.error}</div>
                                         )}
-
                                         <form onSubmit={submitReview}>
                                             <div className="mb-4">
                                                 <label className="block text-sm font-semibold text-slate-700 mb-2">Rating</label>
                                                 <select 
-                                                    value={reviewForm.rating}
+                                                    value={reviewForm.rating} 
                                                     onChange={(e) => setReviewForm({...reviewForm, rating: e.target.value})}
                                                     className="w-full p-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 font-medium text-slate-700"
                                                 >
@@ -364,9 +374,9 @@ const Hospitals = () => {
                                             <div className="mb-4">
                                                 <label className="block text-sm font-semibold text-slate-700 mb-2">Comment</label>
                                                 <textarea 
-                                                    rows="3"
-                                                    required
-                                                    value={reviewForm.comment}
+                                                    rows="3" 
+                                                    required 
+                                                    value={reviewForm.comment} 
                                                     onChange={(e) => setReviewForm({...reviewForm, comment: e.target.value})}
                                                     className="w-full p-3.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none font-medium text-slate-700 placeholder:text-slate-400"
                                                     placeholder="Share details of your own experience at this clinic..."
@@ -390,24 +400,16 @@ const Hospitals = () => {
                                     </div>
                                 )}
                             </div>
-
                         </div>
                     </div>
                 </div>
             )}
-            
+
             {/* Custom Scrollbar CSS */}
             <style dangerouslySetInnerHTML={{__html: `
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background-color: #cbd5e1;
-                    border-radius: 20px;
-                }
+                .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
             `}} />
         </div>
     );
