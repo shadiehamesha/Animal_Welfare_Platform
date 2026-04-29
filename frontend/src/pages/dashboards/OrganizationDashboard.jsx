@@ -4,7 +4,7 @@ import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps
 import { 
     FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, 
     FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle,
-    FaEdit, FaTrash
+    FaEdit, FaTrash, FaUsers
 } from 'react-icons/fa';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
@@ -12,6 +12,7 @@ import UserContactWidget from '../../components/UserContactWidget.jsx';
 import ModernTimePicker from '../../utils/ModernTimePicker.jsx';
 import ModernDatePicker from '../../utils/ModernDatePicker.jsx';
 import HeatmapWidget from '../../components/HeatmapWidget.jsx';
+import EventAttendeesModal from '../../components/modals/EventAttendeesModal.jsx';
 
 // --- Custom Dropdown Component ---
 const CustomSelect = ({ name, value, options, onChange, required = false }) => {
@@ -93,6 +94,8 @@ const OrganizationDashboard = () => {
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
     const [isBulkImportModalOpen, setIsBulkImportModalOpen] = useState(false);
+    const [isAttendeesModalOpen, setIsAttendeesModalOpen] = useState(false);
+    const [selectedEventForAttendees, setSelectedEventForAttendees] = useState(null);
 
     // Default Form States
     const defaultPetForm = {
@@ -305,7 +308,6 @@ const OrganizationDashboard = () => {
         } catch (err) { alert("Invalid JSON format"); }
     };
 
-    // --- Event Handlers ---
     const openAddEventModal = () => {
         setEditingEventId(null);
         setEventForm(defaultEventForm);
@@ -361,7 +363,11 @@ const OrganizationDashboard = () => {
         } catch (err) { console.error(err); }
     };
 
-    // --- Task Handlers ---
+    const openAttendeesModal = (event) => {
+        setSelectedEventForAttendees(event);
+        setIsAttendeesModalOpen(true);
+    };
+
     const openAddTaskModal = () => {
         setEditingTaskId(null);
         setTaskForm(defaultTaskForm);
@@ -424,7 +430,6 @@ const OrganizationDashboard = () => {
         } catch (err) { console.error(err); }
     };
 
-    // --- Render Helpers ---
     const inputClasses = "w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm";
     const labelClasses = "block text-xs font-semibold text-slate-500 mb-1";
 
@@ -512,7 +517,7 @@ const OrganizationDashboard = () => {
                                             </div>
                                         </div>
 
-                                        {/* Added Geospatial Heatmap Widget */}
+                                        {/* Geospatial Heatmap Widget */}
                                         <div className="border-t border-gray-100 pt-8 mt-8">
                                             <h2 className="text-xl font-bold text-slate-900 mb-4">Geospatial Analytics</h2>
                                             <p className="text-slate-500 text-sm mb-6">Density mapping of reported stray animals to help target rescue operations and resource allocation.</p>
@@ -700,10 +705,15 @@ const OrganizationDashboard = () => {
                                                         <div className="flex flex-wrap gap-4 text-xs text-slate-500 mt-2 font-medium">
                                                             <span className="flex items-center gap-1.5"><FaClock/> {event.time.start} - {event.time.end}</span>
                                                             <span className="flex items-center gap-1.5"><FaMapMarkerAlt/> {event.location}</span>
-                                                            <span className="flex items-center gap-1.5">Capacity: {event.capacity}</span>
+                                                            <span className="flex items-center gap-1.5" title="Registered / Capacity">
+                                                                <FaUsers /> {event.registeredAttendees?.length || 0} / {event.capacity}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center gap-2 mt-4 sm:mt-0 shrink-0 border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-4 w-full sm:w-auto justify-end">
+                                                        <button onClick={() => openAttendeesModal(event)} className="text-teal-500 hover:text-teal-700 bg-teal-50 hover:bg-teal-100 p-2.5 rounded-xl transition-colors" title="View Attendees">
+                                                            <FaUsers />
+                                                        </button>
                                                         <button onClick={() => openEditEventModal(event)} className="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2.5 rounded-xl transition-colors" title="Edit Event">
                                                             <FaEdit />
                                                         </button>
@@ -918,6 +928,13 @@ const OrganizationDashboard = () => {
                     </div>
                 </div>
             )}
+
+            {/* Event Attendees Modal */}
+            <EventAttendeesModal 
+                isOpen={isAttendeesModalOpen}
+                onClose={() => setIsAttendeesModalOpen(false)}
+                event={selectedEventForAttendees}
+            />
             
             <style dangerouslySetInnerHTML={{__html: `
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
