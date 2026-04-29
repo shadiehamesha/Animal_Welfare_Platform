@@ -1,8 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { connectDB } from './config/db.js';
+
 import userRoutes from './routes/user.route.js';
 import contactRoutes from './routes/contact.route.js';
 import hospitalRoutes from './routes/hospital.route.js';
@@ -20,10 +22,16 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+// Serve uploaded media files from the 'uploads' folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);

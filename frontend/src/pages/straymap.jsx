@@ -104,7 +104,7 @@ const StrayMap = () => {
                                     <div className="p-4 max-w-[250px] font-sans">
                                         <div className="w-full h-32 rounded-xl overflow-hidden mb-3 bg-slate-100">
                                             <img 
-                                                src={selectedReport.imageUrl} 
+                                                src={`http://localhost:5000${selectedReport.imageUrl}`} 
                                                 alt={`Stray ${selectedReport.species}`} 
                                                 className="w-full h-full object-cover"
                                             />

@@ -1,4 +1,6 @@
 import multer from 'multer';
+import fs from 'fs/promises';
+import path from 'path';
 import { generateImageHash } from '../utils/hash.util.js';
 
 // Configure multer to use memory storage
@@ -21,7 +23,7 @@ export const upload = multer({
 
 /**
  * Middleware to intercept the uploaded file, generate the hash, 
- * and simulate cloud upload before passing to the controller.
+ * save it to the local filesystem, and pass to the controller.
  */
 export const processAndHashImage = async (req, res, next) => {
     if (!req.file) {
@@ -35,10 +37,23 @@ export const processAndHashImage = async (req, res, next) => {
         // Attach the hash to the request body for the controller
         req.body.imageHash = hash;
 
-        // TODO: In a production environment, you would upload req.file.buffer to AWS S3, 
-        // Cloudinary, or Firebase Storage here, and retrieve the public URL.
-        // For now, we mock the uploaded URL:
-        req.body.imageUrl = `/uploads/mock-url-${Date.now()}.jpg`;
+        // Ensure the uploads directory exists
+        const uploadsDir = path.join(process.cwd(), 'uploads');
+        try {
+            await fs.access(uploadsDir);
+        } catch {
+            await fs.mkdir(uploadsDir, { recursive: true });
+        }
+
+        // Generate a unique filename and save to disk
+        const ext = path.extname(req.file.originalname) || '.jpg';
+        const filename = `stray-${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
+        const filepath = path.join(uploadsDir, filename);
+        
+        await fs.writeFile(filepath, req.file.buffer);
+
+        // Store the real URL path in the payload
+        req.body.imageUrl = `/uploads/${filename}`;
 
         next();
     } catch (error) {
