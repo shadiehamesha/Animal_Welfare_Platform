@@ -10,6 +10,7 @@ const Community = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -58,6 +59,13 @@ const Community = () => {
     }
   };
 
+  // Filter posts based on the search query
+  const filteredPosts = posts.filter(post => 
+    post.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    post.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.author?.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
       <Navbar />
@@ -85,12 +93,28 @@ const Community = () => {
 
           {/* Feed Section */}
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-              Recent Discussions
-              <span className="ml-3 bg-green-100 text-green-800 text-sm py-1 px-3 rounded-full">
-                {posts.length}
-              </span>
-            </h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                Recent Discussions
+                <span className="ml-3 bg-green-100 text-green-800 text-sm py-1 px-3 rounded-full">
+                  {filteredPosts.length}
+                </span>
+              </h2>
+
+              {/* Search Bar */}
+              <div className="w-full sm:w-72 flex items-center bg-white rounded-full border border-gray-200 px-4 py-2.5 focus-within:ring-2 focus-within:ring-green-500 focus-within:border-green-500 transition-all shadow-sm">
+                <svg className="w-4 h-4 text-gray-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search discussions..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-transparent outline-none text-gray-700 text-sm"
+                />
+              </div>
+            </div>
 
             {loading ? (
               <div className="flex justify-center items-center py-12">
@@ -102,9 +126,15 @@ const Community = () => {
                 <h3 className="text-xl font-medium text-gray-800">No discussions yet</h3>
                 <p className="text-gray-500 mt-2">Be the first to start a conversation with the community!</p>
               </div>
+            ) : filteredPosts.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm">
+                <div className="text-gray-400 mb-4 text-6xl">🔍</div>
+                <h3 className="text-xl font-medium text-gray-800">No matches found</h3>
+                <p className="text-gray-500 mt-2">We couldn't find any discussions matching "{searchQuery}".</p>
+              </div>
             ) : (
               <div className="space-y-6">
-                {posts.map(post => (
+                {filteredPosts.map(post => (
                   <PostCard key={post._id} post={post} />
                 ))}
               </div>
