@@ -1,7 +1,17 @@
 import React from 'react';
 import { FaHeart, FaPaw } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const AboutHero = () => {
+  const navigate = useNavigate();
+
+  const handleScrollToImpact = () => {
+    const section = document.getElementById('impact-section');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative bg-[#f9fdfc] py-20 lg:py-32 px-4 sm:px-6 lg:px-8 font-sans overflow-hidden flex flex-col items-center text-center">
       
@@ -47,10 +57,16 @@ const AboutHero = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 w-full sm:w-auto">
-          <button className="w-full sm:w-auto bg-[#0d9488] hover:bg-teal-700 text-white font-bold py-3.5 px-8 rounded-full transition-colors shadow-md">
+          <button 
+            onClick={() => navigate('/community')} 
+            className="w-full sm:w-auto bg-[#0d9488] hover:bg-teal-700 text-white font-bold py-3.5 px-8 rounded-full transition-colors shadow-md"
+          >
             Join Our Community
           </button>
-          <button className="w-full sm:w-auto border border-teal-600 text-teal-600 font-bold py-3.5 px-8 rounded-full hover:bg-teal-50 transition-colors">
+          <button 
+            onClick={handleScrollToImpact} 
+            className="w-full sm:w-auto border border-teal-600 text-teal-600 font-bold py-3.5 px-8 rounded-full hover:bg-teal-50 transition-colors"
+          >
             View Our Impact
           </button>
         </div>

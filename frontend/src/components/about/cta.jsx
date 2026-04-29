@@ -1,8 +1,10 @@
-// frontend/src/components/about/cta.jsx
 import React from 'react';
 import { FaPaw } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const AboutCTA = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="relative bg-[#0d9488] py-24 px-4 sm:px-6 lg:px-8 font-sans overflow-hidden mt-24">
       
@@ -44,11 +46,11 @@ const AboutCTA = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-          <button className="w-full sm:w-auto bg-[#1e293b] hover:bg-slate-900 text-white font-semibold py-3.5 px-8 rounded-full transition-colors shadow-lg">
+          <button 
+            onClick={() => navigate('/signup')} 
+            className="w-full sm:w-auto bg-[#1e293b] hover:bg-slate-900 text-white font-semibold py-3.5 px-12 rounded-full transition-colors shadow-lg"
+          >
             Get Started
-          </button>
-          <button className="w-full sm:w-auto border border-white text-white font-semibold py-3.5 px-8 rounded-full hover:bg-white/10 transition-colors">
-            Learn More
           </button>
         </div>
 

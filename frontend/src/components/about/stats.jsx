@@ -2,7 +2,7 @@ import React from 'react';
 
 const AboutStats = () => {
   return (
-    <section className="bg-slate-900 py-24 px-4 sm:px-6 lg:px-8 font-sans mt-24">
+    <section id="impact-section" className="bg-slate-900 py-24 px-4 sm:px-6 lg:px-8 font-sans mt-24">
       <div className="max-w-6xl mx-auto text-center">
         
         {/* Header Content */}
