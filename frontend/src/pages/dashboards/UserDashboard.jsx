@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
@@ -7,6 +8,7 @@ import UserContactWidget from '../../components/UserContactWidget.jsx';
 const UserDashboard = () => {
     const [userName, setUserName] = useState('User');
     const role = localStorage.getItem('role') || 'normal user';
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -45,7 +47,10 @@ const UserDashboard = () => {
                                 {role} Account
                             </p>
                         </div>
-                        <button className="bg-[#0d9488] hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-full transition-colors shadow-sm w-max">
+                        <button 
+                            onClick={() => navigate('/report')}
+                            className="bg-[#0d9488] hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-full transition-colors shadow-sm w-max"
+                        >
                             + Report a Stray
                         </button>
                     </div>
