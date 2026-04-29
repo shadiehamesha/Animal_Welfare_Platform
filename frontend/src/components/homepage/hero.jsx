@@ -26,10 +26,13 @@ const Hero = () => {
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 z-10">
             
             {/* Top Badge */}
-            <div className="flex items-center gap-2 bg-white border border-teal-600 shadow-sm rounded-full px-5 py-2 text-sm font-medium text-teal-700 w-max hover:bg-teal-600 hover:text-white transition-colors">
+            <button 
+              onClick={() => navigate('/community')}
+              className="flex items-center gap-2 bg-white border border-teal-600 shadow-sm rounded-full px-5 py-2 text-sm font-medium text-teal-700 w-max hover:bg-teal-600 hover:text-white transition-colors cursor-pointer"
+            >
               <FaHeart className="text-teal-700 text-xs" />
               <span>Join our community of animal lovers</span>
-            </div>
+            </button>
 
             {/* Main Headline */}
             <h1 className="text-[2.75rem] sm:text-5xl lg:text-[3.5rem] leading-[1.15] font-normal text-slate-900 tracking-tight">
