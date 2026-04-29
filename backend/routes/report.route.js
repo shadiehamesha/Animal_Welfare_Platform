@@ -1,16 +1,24 @@
 import express from 'express';
-import { submitReport, getPublicReports, getHeatmapAnalytics } from '../controllers/report.controller.js';
-import { protect } from '../middleware/auth.middleware.js';
+import { submitReport, getPublicReports, getHeatmapAnalytics, claimReport, getAllReportsAdmin, deleteReportAdmin, reviewClaim } from '../controllers/report.controller.js';
+import { protect, admin } from '../middleware/auth.middleware.js';
 import { upload, processAndHashImage } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
 // Public Routes
-// Intercept 'image' field -> Store in memory -> Hash -> Pass to submitReport
 router.post('/', upload.single('image'), processAndHashImage, submitReport); 
 router.get('/public', getPublicReports);
 
+// User Routes (Claiming an animal)
+// We reuse the existing upload middleware here to seamlessly handle the proof image
+router.post('/:id/claim', protect, upload.single('image'), processAndHashImage, claimReport);
+
 // Protected Analytics Route
 router.get('/analytics/heatmap', protect, getHeatmapAnalytics);
+
+// Admin Management Routes
+router.get('/admin/all', protect, admin, getAllReportsAdmin);
+router.delete('/admin/:id', protect, admin, deleteReportAdmin);
+router.put('/admin/:id/claim', protect, admin, reviewClaim);
 
 export default router;

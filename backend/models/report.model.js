@@ -40,6 +40,20 @@ const reportSchema = new mongoose.Schema({
         type: String, 
         enum: ['Active', 'Resolved', 'Duplicate'], 
         default: 'Active' 
+    },
+    claimedBy: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        default: null 
+    },
+    claimProofUrl: { 
+        type: String, 
+        default: null 
+    },
+    claimStatus: { 
+        type: String, 
+        enum: ['None', 'Pending Review', 'Verified', 'Rejected'], 
+        default: 'None' 
     }
 }, { timestamps: true });
 

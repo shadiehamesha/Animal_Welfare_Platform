@@ -34,6 +34,7 @@ import AdminHospitalManagement from './pages/dashboards/AdminHospitalManagement.
 import AdminOrganizationManagement from './pages/dashboards/AdminOrganizationManagement.jsx';
 import AdminCommunityModeration from './pages/dashboards/AdminCommunityModeration.jsx';
 import AdminEventManagement from './pages/dashboards/AdminEventManagement';
+import AdminStrayManagement from './pages/dashboards/AdminStrayManagement';
 
 
 function App() {
@@ -80,6 +81,7 @@ function App() {
           <Route path="/dashboard/admin/organizations" element={<AdminOrganizationManagement />} />
           <Route path="/dashboard/admin/moderation" element={<AdminCommunityModeration />} />
           <Route path="/dashboard/admin/events" element={<AdminEventManagement />} />
+          <Route path="/dashboard/admin/strays" element={<AdminStrayManagement />} />
         </Route>
       </Routes>
   );

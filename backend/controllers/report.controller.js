@@ -3,7 +3,6 @@ import Report from '../models/report.model.js';
 // Utility: Calculate the Hamming distance between two hash strings
 const calculateHammingDistance = (hash1, hash2) => {
     let distance = 0;
-    // Assuming equal-length binary or hex strings from imghash
     for (let i = 0; i < hash1.length; i++) {
         if (hash1[i] !== hash2[i]) distance++;
     }
@@ -40,8 +39,6 @@ export const submitReport = async (req, res) => {
             let potentialDuplicate = null;
             for (const report of nearbyReports) {
                 const distance = calculateHammingDistance(imageHash, report.imageHash);
-                
-                // Threshold: If the distance is <= 5 bits, the images are visually near-identical
                 if (distance <= 5) {
                     potentialDuplicate = report;
                     break;
@@ -82,7 +79,8 @@ export const submitReport = async (req, res) => {
 // @access  Public
 export const getPublicReports = async (req, res) => {
     try {
-        const reports = await Report.find({ status: 'Active' });
+        // Exclude reports that have a verified claim
+        const reports = await Report.find({ status: 'Active', claimStatus: { $ne: 'Verified' } });
 
         // Privacy First: Obfuscate the exact coordinates for the public view
         const obfuscatedReports = reports.map(report => {
@@ -92,12 +90,13 @@ export const getPublicReports = async (req, res) => {
             const latOffset = (Math.random() - 0.5) * 0.01;
             const lngOffset = (Math.random() - 0.5) * 0.01;
             
-            doc.location.coordinates[0] += lngOffset; // Obfuscate Longitude
-            doc.location.coordinates[1] += latOffset; // Obfuscate Latitude
+            doc.location.coordinates[0] += lngOffset;
+            doc.location.coordinates[1] += latOffset;
             
             // Strip sensitive backend data before sending to the client
             delete doc.imageHash;
             delete doc.reporter;
+            delete doc.claimedBy; 
             
             return doc;
         });
@@ -121,15 +120,83 @@ export const getHeatmapAnalytics = async (req, res) => {
 
         // Fetch exact coordinates
         const reports = await Report.find({ status: 'Active' }).select('location species createdAt');
-        
-        // Format payload specifically for the Google Maps Visualization library
+
         const heatmapData = reports.map(r => ({
             lat: r.location.coordinates[1],
             lng: r.location.coordinates[0],
-            weight: 1 // Baseline weight. Can be scaled later based on specific analytics logic.
+            weight: 1 // Baseline weight.
         }));
 
         res.status(200).json(heatmapData);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const claimReport = async (req, res) => {
+    try {
+        const report = await Report.findById(req.params.id);
+        
+        if (!report) return res.status(404).json({ message: 'Report not found' });
+        if (report.claimStatus === 'Pending Review' || report.claimStatus === 'Verified') {
+            return res.status(400).json({ message: 'This animal is already being claimed or has been verified.' });
+        }
+
+        report.claimedBy = req.user._id;
+        report.claimProofUrl = req.body.imageUrl;
+        report.claimStatus = 'Pending Review';
+
+        await report.save();
+        res.status(200).json({ message: 'Claim submitted successfully. Pending admin review.', report });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const getAllReportsAdmin = async (req, res) => {
+    try {
+        // Fetch all exact reports and populate users
+        const reports = await Report.find()
+            .populate('reporter', 'name email')
+            .populate('claimedBy', 'name email')
+            .sort({ createdAt: -1 });
+            
+        res.status(200).json(reports);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const deleteReportAdmin = async (req, res) => {
+    try {
+        const report = await Report.findByIdAndDelete(req.params.id);
+        if (!report) return res.status(404).json({ message: 'Report not found' });
+        res.status(200).json({ message: 'Report completely deleted from the system' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const reviewClaim = async (req, res) => {
+    try {
+        const { action } = req.body;
+        const report = await Report.findById(req.params.id);
+        
+        if (!report) return res.status(404).json({ message: 'Report not found' });
+
+        if (action === 'approve') {
+            report.claimStatus = 'Verified';
+            report.status = 'Resolved';
+        } else if (action === 'reject') {
+            report.claimStatus = 'Rejected';
+            report.claimProofUrl = null;
+            report.claimedBy = null;
+        } else {
+            return res.status(400).json({ message: 'Invalid action. Use approve or reject.' });
+        }
+
+        await report.save();
+        res.status(200).json({ message: `Claim successfully ${action}d.`, report });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
