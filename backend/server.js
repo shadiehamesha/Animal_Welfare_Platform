@@ -11,11 +11,10 @@ import petRoutes from './routes/pet.route.js';
 import eventRoutes from './routes/event.route.js';
 import taskRoutes from './routes/task.route.js';
 import reportRoutes from './routes/report.route.js';
+import communityRoutes from './routes/community.route.js';
+import moderationRoutes from './routes/moderation.route.js';
 
-// Load environment variables
 dotenv.config();
-
-// Connect to MongoDB
 connectDB();
 
 const app = express();
@@ -35,6 +34,8 @@ app.use('/api/pets', petRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/community', communityRoutes);
+app.use('/api/moderation', moderationRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

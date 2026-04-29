@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaHome, FaUsers, FaHospital, FaBuilding, FaEnvelope, FaSignOutAlt, FaPaw } from 'react-icons/fa';
+import { FaHome, FaUsers, FaHospital, FaBuilding, FaEnvelope, FaSignOutAlt, FaPaw, FaShieldAlt } from 'react-icons/fa';
 
 const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     const navigate = useNavigate();
@@ -17,6 +17,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         { path: '/dashboard/admin/organizations', name: 'Organizations', icon: <FaBuilding /> },
         { path: '/dashboard/admin/hospitals', name: 'Hospitals', icon: <FaHospital /> },
         { path: '/dashboard/admin/contacts', name: 'Messages', icon: <FaEnvelope /> },
+        { path: '/dashboard/admin/moderation', name: 'Moderation', icon: <FaShieldAlt /> },
     ];
 
     const sidebarContent = (
@@ -41,7 +42,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                         end={link.path === '/dashboard/admin'}
                         onClick={() => setIsMobileOpen && setIsMobileOpen(false)}
                         className={({ isActive }) => `
-                            flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-all duration-200
+                            flex items-center gap-3 px-4 py-3 rounded-2xl font-normal transition-all duration-200
                             ${isActive 
                                 ? 'bg-teal-50 text-teal-700 shadow-sm' 
                                 : 'text-slate-500 hover:bg-gray-50 hover:text-slate-900'
@@ -58,7 +59,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
             <div className="p-4 border-t border-gray-100 shrink-0">
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-normal text-red-600 hover:bg-red-50 transition-colors"
                 >
                     <FaSignOutAlt className="text-lg" />
                     <span>Log Out</span>

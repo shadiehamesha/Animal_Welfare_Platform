@@ -13,6 +13,7 @@ import Events from './pages/events.jsx';
 import Medicine from './pages/medicine.jsx';
 import Alerts from './pages/alerts.jsx';
 import Community from './pages/community.jsx';
+import CommunityPostDetail from './pages/CommunityPostDetail.jsx';
 import Pharmacy from './pages/pharmacy.jsx';
 import Pets from './pages/pets.jsx';
 import Blog from './pages/blog.jsx';
@@ -31,6 +32,7 @@ import UserManagement from './pages/dashboards/UserManagement.jsx';
 import AdminContactManagement from './pages/dashboards/AdminContactManagement.jsx';
 import AdminHospitalManagement from './pages/dashboards/AdminHospitalManagement.jsx';
 import AdminOrganizationManagement from './pages/dashboards/AdminOrganizationManagement.jsx';
+import AdminCommunityModeration from './pages/dashboards/AdminCommunityModeration.jsx';
 
 
 function App() {
@@ -51,6 +53,7 @@ function App() {
         <Route path="/medicines" element={<Medicine />} />
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/community/post/:id" element={<CommunityPostDetail />} />
         <Route path="/pharmacies" element={<Pharmacy />} />
         <Route path="/pets" element={<Pets />} />
         <Route path="/blog" element={<Blog />} />
@@ -74,6 +77,7 @@ function App() {
           <Route path="/dashboard/admin/contacts" element={<AdminContactManagement />} />
           <Route path="/dashboard/admin/hospitals" element={<AdminHospitalManagement />} />
           <Route path="/dashboard/admin/organizations" element={<AdminOrganizationManagement />} />
+          <Route path="/dashboard/admin/moderation" element={<AdminCommunityModeration />} />
         </Route>
       </Routes>
   );
