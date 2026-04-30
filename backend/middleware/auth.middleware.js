@@ -60,3 +60,12 @@ export const shelterManager = (req, res, next) => {
         res.status(403).json({ message: 'Not authorized as organization/shelter manager' });
     }
 };
+
+// Pharmacy Manager routes - checks role
+export const pharmacyManager = (req, res, next) => {
+    if (req.user && (req.user.role === 'pharmacies' || req.user.role === 'system admin')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'Not authorized as pharmacy manager' });
+    }
+};

@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/homepage.jsx';
 import About from './pages/about.jsx';
 import ContactUs from './pages/contactus.jsx';
-import PrivacyPolicy from './pages/privacypolicy.jsx'
+import PrivacyPolicy from './pages/privacypolicy.jsx';
 import Login from './pages/login.jsx';
 import SignUp from './pages/signup.jsx';
 import StrayReport from './pages/strayreport.jsx';
@@ -33,9 +33,9 @@ import AdminContactManagement from './pages/dashboards/AdminContactManagement.js
 import AdminHospitalManagement from './pages/dashboards/AdminHospitalManagement.jsx';
 import AdminOrganizationManagement from './pages/dashboards/AdminOrganizationManagement.jsx';
 import AdminCommunityModeration from './pages/dashboards/AdminCommunityModeration.jsx';
-import AdminEventManagement from './pages/dashboards/AdminEventManagement';
-import AdminStrayManagement from './pages/dashboards/AdminStrayManagement';
-
+import AdminEventManagement from './pages/dashboards/AdminEventManagement.jsx';
+import AdminStrayManagement from './pages/dashboards/AdminStrayManagement.jsx';
+import AdminPharmacyManagement from './pages/dashboards/AdminPharmacyManagement.jsx';
 
 function App() {
   return (
@@ -78,6 +78,7 @@ function App() {
           <Route path="/dashboard/admin/users" element={<UserManagement />} />
           <Route path="/dashboard/admin/contacts" element={<AdminContactManagement />} />
           <Route path="/dashboard/admin/hospitals" element={<AdminHospitalManagement />} />
+          <Route path="/dashboard/admin/pharmacies" element={<AdminPharmacyManagement />} />
           <Route path="/dashboard/admin/organizations" element={<AdminOrganizationManagement />} />
           <Route path="/dashboard/admin/moderation" element={<AdminCommunityModeration />} />
           <Route path="/dashboard/admin/events" element={<AdminEventManagement />} />

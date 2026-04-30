@@ -15,6 +15,8 @@ import taskRoutes from './routes/task.route.js';
 import reportRoutes from './routes/report.route.js';
 import communityRoutes from './routes/community.route.js';
 import moderationRoutes from './routes/moderation.route.js';
+import pharmacyRoutes from './routes/pharmacy.route.js';
+import medicineRoutes from './routes/medicine.route.js';
 
 dotenv.config();
 connectDB();
@@ -44,6 +46,8 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/moderation', moderationRoutes);
+app.use('/api/pharmacies', pharmacyRoutes);
+app.use('/api/medicines', medicineRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
