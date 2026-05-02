@@ -64,7 +64,7 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
             <div className="p-4 border-t border-gray-100 shrink-0">
                 <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-normal text-red-600 hover:bg-red-50 transition-colors"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-normal text-red-600 bg-red-200 hover:bg-red-300 transition-colors"
                 >
                     <FaSignOutAlt className="text-lg" />
                     <span>Log Out</span>
