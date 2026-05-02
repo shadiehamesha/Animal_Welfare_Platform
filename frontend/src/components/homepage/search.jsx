@@ -9,7 +9,7 @@ const Search = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     
-    // Validation: Only navigate if the search is not empty or just spaces
+    // Only navigate if the search is not empty or just spaces
     if (searchQuery.trim().length > 0) {
       navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
@@ -30,8 +30,11 @@ const Search = () => {
         </h2>
         
         {/* Search Form */}
-        <form className="max-w-3xl mx-auto relative mb-8 flex flex-col sm:flex-row gap-4 sm:gap-0" onSubmit={handleSearch}>
-          <div className="flex-grow flex items-center bg-white sm:rounded-l-full sm:rounded-r-none rounded-full border border-gray-200 sm:border-r-0 pl-6 pr-4 py-2 sm:py-0 h-14 focus-within:border-teal-500 focus-within:ring-1 focus-within:ring-teal-500 transition-all">
+        <form 
+          className="max-w-3xl mx-auto relative mb-8 flex flex-col sm:flex-row gap-4 sm:gap-0 sm:bg-white sm:rounded-full sm:border sm:border-gray-200 sm:overflow-hidden sm:focus-within:border-[#0d9488] sm:focus-within:ring-1 sm:focus-within:ring-[#0d9488] transition-all sm:shadow-sm" 
+          onSubmit={handleSearch}
+        >
+          <div className="flex-grow flex items-center bg-white rounded-full sm:bg-transparent sm:rounded-none border border-gray-200 sm:border-none pl-6 pr-4 py-2 sm:py-0 h-14 focus-within:border-[#0d9488] focus-within:ring-1 focus-within:ring-[#0d9488] sm:focus-within:ring-0 sm:focus-within:border-transparent transition-all">
             <input 
               type="text" 
               placeholder="Search for vets, medicines, or shelters..." 
@@ -42,7 +45,7 @@ const Search = () => {
           </div>
           <button 
             type="submit" 
-            className="bg-[#0d9488] hover:bg-teal-700 text-white px-8 h-14 rounded-full sm:rounded-l-none font-semibold transition-colors shadow-sm whitespace-nowrap text-[15px]"
+            className="bg-[#0d9488] hover:bg-teal-700 text-white px-8 h-14 rounded-full sm:rounded-none font-semibold transition-colors shadow-sm sm:shadow-none whitespace-nowrap text-[15px]"
           >
             Search Now
           </button>

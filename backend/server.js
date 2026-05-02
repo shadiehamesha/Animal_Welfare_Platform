@@ -19,6 +19,7 @@ import pharmacyRoutes from './routes/pharmacy.route.js';
 import medicineRoutes from './routes/medicine.route.js';
 import alertRoutes from './routes/alert.route.js';
 import { startCronJobs } from './utils/cron.util.js';
+import searchRoutes from './routes/search.route.js';
 
 dotenv.config();
 connectDB();
@@ -54,6 +55,7 @@ app.use('/api/moderation', moderationRoutes);
 app.use('/api/pharmacies', pharmacyRoutes);
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/alerts', alertRoutes);
+app.use('/api/search', searchRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
