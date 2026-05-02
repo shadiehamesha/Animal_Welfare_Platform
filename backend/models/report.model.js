@@ -6,6 +6,11 @@ const reportSchema = new mongoose.Schema({
         ref: 'User',
         default: null // Nullable to allow anonymous public reporting
     },
+    reportType: { // Distinguish between stray sightings and lost pets
+        type: String,
+        enum: ['Stray', 'Lost'],
+        default: 'Stray'
+    },
     species: { 
         type: String, 
         required: true, 

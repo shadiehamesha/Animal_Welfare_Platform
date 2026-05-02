@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema({
         type: String, 
         enum: ['normal user', 'system admin', 'organizations/shelters', 'pharmacies', 'hospitals/veterinarians'],
         default: 'normal user'
+    },
+    searchPreferences: { // Used for adoption recommendation algorithm
+        preferredSpecies: [{ type: String }],
+        preferredSizes: [{ type: String }],
+        preferredAges: [{ type: String }]
     }
 }, { timestamps: true });
 

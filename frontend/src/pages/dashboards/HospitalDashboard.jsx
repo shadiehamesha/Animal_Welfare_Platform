@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
-import { FaStar, FaReply } from 'react-icons/fa';
+import { FaStar, FaReply, FaBullhorn } from 'react-icons/fa';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
 import ModernTimePicker from '../../utils/ModernTimePicker.jsx';
 import HeatmapWidget from '../../components/HeatmapWidget.jsx';
 
-// ---- Main Dashboard Component ----
 const HospitalDashboard = () => {
     const [userName, setUserName] = useState('Hospital');
     const [userId, setUserId] = useState(null);
@@ -27,13 +26,19 @@ const HospitalDashboard = () => {
     const [replyingTo, setReplyingTo] = useState(null);
     const [replyText, setReplyText] = useState("");
 
-    // Form Data (Initialized with standard 9-5 defaults for the time pickers)
+    // Form Data
     const [formData, setFormData] = useState({
         name: '', address: '', city: '',
         location: { lat: 7.8731, lng: 80.7718 },
         hours: { open: '09:00', close: '17:00', is24_7: false },
         contact: { phone: '', email: '', website: '' }
     });
+
+    // Alert Broadcast State
+    const [alertForm, setAlertForm] = useState({
+        message: '', daysValid: 7, location: { lat: 7.8731, lng: 80.7718 }
+    });
+    const [isAlertLoading, setIsAlertLoading] = useState(false);
 
     useEffect(() => {
         const fetchUserDataAndHospital = async () => {
@@ -165,13 +170,47 @@ const HospitalDashboard = () => {
         }
     };
 
+    // Alert Broadcast Handler
+    const handleAlertSubmit = async (e) => {
+        e.preventDefault();
+        setIsAlertLoading(true);
+        setMessage({ type: '', text: '' });
+        
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch('http://localhost:5000/api/alerts', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    type: 'Disease Outbreak',
+                    message: alertForm.message,
+                    daysValid: alertForm.daysValid,
+                    lat: alertForm.location.lat,
+                    lng: alertForm.location.lng
+                })
+            });
+
+            if (res.ok) {
+                setMessage({ type: 'success', text: 'Disease outbreak alert broadcasted to the community.' });
+                setAlertForm({ message: '', daysValid: 7, location: { lat: 7.8731, lng: 80.7718 } });
+            } else {
+                setMessage({ type: 'error', text: 'Failed to broadcast alert.' });
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Network error while broadcasting.' });
+        } finally {
+            setIsAlertLoading(false);
+            setTimeout(() => setMessage({ type: '', text: '' }), 5000);
+        }
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-[#f9fdfc] font-sans">
             <Navbar />
             <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-6xl mx-auto">
                     
-                    {/* Header - Button removed */}
+                    {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Dr. {userName} / Clinic</h1>
@@ -209,6 +248,13 @@ const HospitalDashboard = () => {
                                         className={`flex-1 py-4 px-4 font-bold text-sm transition-colors border-b-2 whitespace-nowrap ${activeTab === 'analytics' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
                                     >
                                         Geospatial Analytics
+                                    </button>
+                                    {/* Alerts Tab */}
+                                    <button 
+                                        onClick={() => setActiveTab('alerts')} 
+                                        className={`flex-1 py-4 px-4 font-bold text-sm transition-colors border-b-2 flex items-center justify-center gap-2 whitespace-nowrap ${activeTab === 'alerts' ? 'border-teal-600 text-teal-700 bg-white' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+                                    >
+                                        <FaBullhorn /> Broadcast Alerts
                                     </button>
                                 </div>
                             )}
@@ -485,6 +531,72 @@ const HospitalDashboard = () => {
                                         <div className="w-full min-h-[400px]">
                                             <HeatmapWidget token={localStorage.getItem('token')} />
                                         </div>
+                                    </div>
+                                )}
+
+                                {/* ALERTS TAB */}
+                                {activeTab === 'alerts' && hospital && (
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-center mb-4 border-b border-gray-50 pb-4">
+                                            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                                Broadcast Disease Alert
+                                            </h2>
+                                        </div>
+                                        <p className="text-slate-500 text-sm mb-6">
+                                            Notify the community about localized disease outbreaks. Alerts will appear on the public Notification Hub and remain active for the specified duration.
+                                        </p>
+                                        <form onSubmit={handleAlertSubmit} className="space-y-6 max-w-2xl">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-500 mb-1">Alert Message *</label>
+                                                <textarea 
+                                                    required
+                                                    value={alertForm.message}
+                                                    onChange={e => setAlertForm({...alertForm, message: e.target.value})}
+                                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm resize-none"
+                                                    rows="3"
+                                                    placeholder="e.g., URGENT: Parvovirus outbreak detected in this area. Please ensure your dogs are vaccinated."
+                                                ></textarea>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-slate-500 mb-1">Duration (Days) *</label>
+                                                <input 
+                                                    type="number" 
+                                                    required
+                                                    min="1"
+                                                    max="30"
+                                                    value={alertForm.daysValid}
+                                                    onChange={e => setAlertForm({...alertForm, daysValid: parseInt(e.target.value)})}
+                                                    className="w-full sm:w-1/3 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" 
+                                                />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-sm font-bold text-slate-800 mb-2 border-b pb-2">Affected Area *</h3>
+                                                <p className="text-xs text-slate-500 mb-3">Click on the map to pin the epicenter of the outbreak.</p>
+                                                <div className="h-64 w-full rounded-2xl overflow-hidden border border-gray-200 relative bg-gray-100 shadow-inner">
+                                                    <APIProvider apiKey={MAPS_API_KEY}>
+                                                        <Map 
+                                                            mapId="ALERT_MAP_ID"
+                                                            defaultCenter={alertForm.location} 
+                                                            center={alertForm.location}
+                                                            defaultZoom={12} 
+                                                            onClick={(e) => setAlertForm({...alertForm, location: {lat: e.detail.latLng.lat, lng: e.detail.latLng.lng}})}
+                                                            gestureHandling={'greedy'}
+                                                        >
+                                                            <AdvancedMarker position={alertForm.location}>
+                                                                <Pin background={'#ef4444'} borderColor={'#b91c1c'} glyphColor={'#fff'} />
+                                                            </AdvancedMarker>
+                                                        </Map>
+                                                    </APIProvider>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                type="submit" 
+                                                disabled={isAlertLoading} 
+                                                className={`bg-red-600 text-white font-bold py-3 px-8 rounded-full shadow-md transition-colors ${isAlertLoading ? 'opacity-50' : 'hover:bg-red-700'}`}
+                                            >
+                                                {isAlertLoading ? 'Broadcasting...' : 'Broadcast Alert'}
+                                            </button>
+                                        </form>
                                     </div>
                                 )}
                             </div>

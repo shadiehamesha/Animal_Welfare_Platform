@@ -17,9 +17,14 @@ import communityRoutes from './routes/community.route.js';
 import moderationRoutes from './routes/moderation.route.js';
 import pharmacyRoutes from './routes/pharmacy.route.js';
 import medicineRoutes from './routes/medicine.route.js';
+import alertRoutes from './routes/alert.route.js';
+import { startCronJobs } from './utils/cron.util.js';
 
 dotenv.config();
 connectDB();
+
+// Initialize automated jobs
+startCronJobs();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -48,6 +53,7 @@ app.use('/api/community', communityRoutes);
 app.use('/api/moderation', moderationRoutes);
 app.use('/api/pharmacies', pharmacyRoutes);
 app.use('/api/medicines', medicineRoutes);
+app.use('/api/alerts', alertRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

@@ -1,4 +1,5 @@
 import Report from '../models/report.model.js';
+import Alert from '../models/alert.model.js';
 
 // Utility: Calculate the Hamming distance between two hash strings
 const calculateHammingDistance = (hash1, hash2) => {
@@ -14,10 +15,8 @@ const calculateHammingDistance = (hash1, hash2) => {
 // @access  Public
 export const submitReport = async (req, res) => {
     try {
-        // imageUrl and imageHash are assumed to be attached to req.body by the preceding multer/sharp middleware
-        const { species, description, lat, lng, imageUrl, imageHash, forceSubmit } = req.body;
+        const { reportType, species, description, lat, lng, imageUrl, imageHash, forceSubmit } = req.body;
         
-        // If the user was already warned of a duplicate and visually confirmed it's a DIFFERENT animal, forceSubmit is true
         if (!forceSubmit) {
             // Time boundary: Only check against reports from the last 72 hours
             const seventyTwoHoursAgo = new Date(Date.now() - 72 * 60 * 60 * 1000);
@@ -56,6 +55,7 @@ export const submitReport = async (req, res) => {
 
         const newReport = new Report({
             reporter: req.user ? req.user._id : null, 
+            reportType: reportType || 'Stray',
             species,
             description,
             location: {
@@ -67,6 +67,18 @@ export const submitReport = async (req, res) => {
         });
 
         const savedReport = await newReport.save();
+
+        // If it's a Lost Pet, automatically generate a local alert
+        if (savedReport.reportType === 'Lost') {
+            await Alert.create({
+                type: 'Lost Pet',
+                message: `URGENT: Lost ${species} reported near this location. Description: ${description}`,
+                location: savedReport.location,
+                createdBy: req.user ? req.user._id : null,
+                expiresAt: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days
+            });
+        }
+
         res.status(201).json(savedReport);
 
     } catch (error) {
@@ -82,16 +94,18 @@ export const getPublicReports = async (req, res) => {
         // Exclude reports that have a verified claim
         const reports = await Report.find({ status: 'Active', claimStatus: { $ne: 'Verified' } });
 
-        // Privacy First: Obfuscate the exact coordinates for the public view
+        // Obfuscate the exact coordinates for the public view
         const obfuscatedReports = reports.map(report => {
             const doc = report.toObject();
-            
-            // Generate a random offset between -0.005 and 0.005 degrees (approx 500 meters)
-            const latOffset = (Math.random() - 0.5) * 0.01;
-            const lngOffset = (Math.random() - 0.5) * 0.01;
-            
-            doc.location.coordinates[0] += lngOffset;
-            doc.location.coordinates[1] += latOffset;
+    
+            // Only obfuscate if it's a standard stray sighting
+            if (doc.reportType !== 'Lost') {
+                const latOffset = (Math.random() - 0.5) * 0.01;
+                const lngOffset = (Math.random() - 0.5) * 0.01;
+                
+                doc.location.coordinates[0] += lngOffset;
+                doc.location.coordinates[1] += latOffset;
+            }
             
             // Strip sensitive backend data before sending to the client
             delete doc.imageHash;

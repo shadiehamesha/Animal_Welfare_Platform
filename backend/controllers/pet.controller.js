@@ -1,18 +1,29 @@
 import Pet from '../models/pet.model.js';
 import Shelter from '../models/shelter.model.js';
+import User from '../models/user.model.js';
+import { generatePetRecommendations } from '../services/recommendation.service.js';
 
 export const getPublicPets = async (req, res) => {
     try {
-        const { shelter } = req.query;
-        if (!shelter) return res.status(400).json({ message: 'Shelter ID is required' });
+        const { shelter, size, species } = req.query;
+        let query = { adoptionStatus: 'Available' };
 
-        // Only return pets that are available for adoption
-        const pets = await Pet.find({ 
-            shelter: shelter, 
-            adoptionStatus: 'Available' 
-        }).sort({ createdAt: -1 });
-        
+        if (shelter) query.shelter = shelter;
+        if (size) query.size = size;
+        if (species) query.species = species;
+
+        const pets = await Pet.find(query).sort({ createdAt: -1 });
         res.status(200).json(pets);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// Recommendations
+export const getRecommendations = async (req, res) => {
+    try {
+        const recommendedPets = await generatePetRecommendations(req.user._id);
+        res.status(200).json(recommendedPets);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -82,5 +93,41 @@ export const bulkImportPets = async (req, res) => {
         res.status(201).json({ message: `${insertedPets.length} pets imported successfully`, data: insertedPets });
     } catch (error) {
         res.status(500).json({ message: 'Bulk import failed', error: error.message });
+    }
+};
+
+export const getAllPetsAdmin = async (req, res) => {
+    try {
+        const pets = await Pet.find()
+            .populate('shelter', 'organizationName city')
+            .sort({ createdAt: -1 });
+        res.status(200).json(pets);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const updatePetAdmin = async (req, res) => {
+    try {
+        const updatedPet = await Pet.findByIdAndUpdate(
+            req.params.id,
+            { $set: req.body },
+            { new: true, runValidators: true }
+        ).populate('shelter', 'organizationName city');
+        
+        if (!updatedPet) return res.status(404).json({ message: 'Pet not found' });
+        res.status(200).json(updatedPet);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const deletePetAdmin = async (req, res) => {
+    try {
+        const pet = await Pet.findByIdAndDelete(req.params.id);
+        if (!pet) return res.status(404).json({ message: 'Pet not found' });
+        res.status(200).json({ message: 'Pet deleted completely' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

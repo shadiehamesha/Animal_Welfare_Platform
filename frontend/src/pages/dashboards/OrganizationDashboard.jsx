@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
-import { 
-    FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, 
-    FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle,
-    FaEdit, FaTrash, FaUsers
-} from 'react-icons/fa';
+import { FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle, FaEdit, FaTrash, FaUsers } from 'react-icons/fa';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
@@ -14,7 +10,7 @@ import ModernDatePicker from '../../utils/ModernDatePicker.jsx';
 import HeatmapWidget from '../../components/HeatmapWidget.jsx';
 import EventAttendeesModal from '../../components/modals/EventAttendeesModal.jsx';
 
-// --- Custom Dropdown Component ---
+// custom dropdown component
 const CustomSelect = ({ name, value, options, onChange, required = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -65,7 +61,6 @@ const CustomSelect = ({ name, value, options, onChange, required = false }) => {
     );
 };
 
-// --- Main Dashboard Component ---
 const OrganizationDashboard = () => {
     const [userName, setUserName] = useState('Organization');
     const role = localStorage.getItem('role') || 'organizations/shelters';
@@ -99,7 +94,7 @@ const OrganizationDashboard = () => {
 
     // Default Form States
     const defaultPetForm = {
-        name: '', species: 'Dog', breed: '', age: '', gender: 'Unknown',
+        name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',
         healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' },
         adoptionStatus: 'Available', description: ''
     };
@@ -131,7 +126,7 @@ const OrganizationDashboard = () => {
         if (!token) return;
 
         try {
-            // 1. Fetch User Data
+            // Fetch User Data
             const decoded = jwtDecode(token);
             const userRes = await fetch(`http://localhost:5000/api/users/${decoded.id}`, { headers: { Authorization: `Bearer ${token}` } });
             if (userRes.ok) {
@@ -139,7 +134,7 @@ const OrganizationDashboard = () => {
                 setUserName(userData.name);
             }
 
-            // 2. Fetch Shelter Profile
+            // Fetch Shelter Profile
             const shelterRes = await fetch('http://localhost:5000/api/organizations/profile', { headers: { Authorization: `Bearer ${token}` } });
             if (shelterRes.ok) {
                 const shelterData = await shelterRes.json();
@@ -157,7 +152,6 @@ const OrganizationDashboard = () => {
                     contact: shelterData.contact || { phone: '', email: '', website: '' }
                 });
 
-                // Fetch dependent data only if shelter profile exists
                 fetchAnalytics(token);
                 fetchPets(token);
                 fetchEvents(token);
@@ -188,7 +182,7 @@ const OrganizationDashboard = () => {
         if (res.ok) setTasks(await res.json());
     };
 
-    // --- Form Handlers ---
+    // Form Handlers
     const handleProfileSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -213,7 +207,7 @@ const OrganizationDashboard = () => {
         finally { setIsLoading(false); setTimeout(() => setMessage({type:'', text:''}), 3000); }
     };
 
-    // --- Pet Handlers ---
+    // Pet Handlers
     const openAddPetModal = () => {
         setEditingPetId(null);
         setPetForm(defaultPetForm);
@@ -227,6 +221,7 @@ const OrganizationDashboard = () => {
             species: pet.species || 'Dog',
             breed: pet.breed || '',
             age: pet.age || '',
+            size: pet.size || 'Unknown',
             gender: pet.gender || 'Unknown',
             healthStatus: pet.healthStatus || { vaccinated: false, sterilized: false, medicalNotes: '' },
             adoptionStatus: pet.adoptionStatus || 'Available',
@@ -320,7 +315,7 @@ const OrganizationDashboard = () => {
             title: event.title || '',
             eventType: event.eventType || 'Adoption Drive',
             description: event.description || '',
-            date: event.date ? event.date.split('T')[0] : '', // Format for date picker
+            date: event.date ? event.date.split('T')[0] : '', 
             time: event.time || { start: '09:00', end: '17:00' },
             location: event.location || '',
             capacity: event.capacity || 50
@@ -517,6 +512,28 @@ const OrganizationDashboard = () => {
                                             </div>
                                         </div>
 
+                                        {/* Time-Series Adoption Analytics */}
+                                        {analytics?.monthlyAdoptions && analytics.monthlyAdoptions.length > 0 && (
+                                            <div className="border-t border-gray-100 pt-8 mt-8">
+                                                <h2 className="text-xl font-bold text-slate-900 mb-4">Adoption Trends (Last 6 Months)</h2>
+                                                <div className="flex items-end gap-3 h-48 mt-4 bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                                    {analytics.monthlyAdoptions.map((data, idx) => {
+                                                        const maxCount = Math.max(...analytics.monthlyAdoptions.map(d => d.count), 1);
+                                                        const height = (data.count / maxCount) * 100;
+                                                        const monthName = new Date(data._id.year, data._id.month - 1).toLocaleString('default', { month: 'short' });
+                                                        return (
+                                                            <div key={idx} className="flex flex-col items-center flex-1 group">
+                                                                <div className="w-full max-w-[60px] bg-teal-200 rounded-t-lg relative flex items-start justify-center hover:bg-teal-400 transition-colors pt-2" style={{ height: `${height}%`, minHeight: '28px' }}>
+                                                                    <span className="text-teal-900 font-bold text-xs">{data.count}</span>
+                                                                </div>
+                                                                <span className="text-xs text-slate-500 mt-3 font-semibold uppercase">{monthName}</span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        )}
+
                                         {/* Geospatial Heatmap Widget */}
                                         <div className="border-t border-gray-100 pt-8 mt-8">
                                             <h2 className="text-xl font-bold text-slate-900 mb-4">Geospatial Analytics</h2>
@@ -640,7 +657,7 @@ const OrganizationDashboard = () => {
                                                                 <p className="text-xs text-slate-500">{pet.species}</p>
                                                             </td>
                                                             <td className="py-4 px-5 text-sm text-slate-700">
-                                                                {pet.breed || 'Mixed'} • {pet.age || 'N/A'} • {pet.gender}
+                                                                {pet.breed || 'Mixed'} • {pet.age || 'N/A'} • {pet.size && pet.size !== 'Unknown' ? `${pet.size} • ` : ''}{pet.gender}
                                                             </td>
                                                             <td className="py-4 px-5">
                                                                 <div className="flex gap-1 flex-wrap">
@@ -779,8 +796,6 @@ const OrganizationDashboard = () => {
             </main>
             <Footer />
 
-            {/* --- MODALS --- */}
-            
             {/* Add / Edit Pet Modal */}
             {isPetModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
@@ -808,6 +823,10 @@ const OrganizationDashboard = () => {
                                     <input type="text" value={petForm.age} onChange={(e) => setPetForm({...petForm, age: e.target.value})} className={inputClasses} />
                                 </div>
                                 <div>
+                                    <label className={labelClasses}>Size</label>
+                                    <CustomSelect name="size" value={petForm.size} options={[{value:'Small', label:'Small'}, {value:'Medium', label:'Medium'}, {value:'Large', label:'Large'}, {value:'Unknown', label:'Unknown'}]} onChange={(e) => setPetForm({...petForm, size: e.target.value})} />
+                                </div>
+                                <div className="col-span-2 sm:col-span-1">
                                     <label className={labelClasses}>Gender</label>
                                     <CustomSelect name="gender" value={petForm.gender} options={[{value:'Male', label:'Male'}, {value:'Female', label:'Female'}, {value:'Unknown', label:'Unknown'}]} onChange={(e) => setPetForm({...petForm, gender: e.target.value})} />
                                 </div>
@@ -842,7 +861,7 @@ const OrganizationDashboard = () => {
                         </div>
                         <form onSubmit={handleBulkImport}>
                             <label className={labelClasses}>Paste JSON Data Array</label>
-                            <textarea rows="8" value={bulkImportData} onChange={(e) => setBulkImportData(e.target.value)} placeholder='[{"name": "Rex", "species": "Dog", "breed": "Husky"}]' className={`${inputClasses} resize-none font-mono text-xs`} required></textarea>
+                            <textarea rows="8" value={bulkImportData} onChange={(e) => setBulkImportData(e.target.value)} placeholder='[{"name": "Rex", "species": "Dog", "size": "Medium"}]' className={`${inputClasses} resize-none font-mono text-xs`} required></textarea>
                             <button type="submit" className="w-full mt-4 bg-slate-900 text-white font-bold py-3.5 rounded-xl hover:bg-slate-800 transition">Import Data</button>
                         </form>
                     </div>

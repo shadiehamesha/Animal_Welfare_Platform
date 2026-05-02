@@ -36,6 +36,8 @@ import AdminCommunityModeration from './pages/dashboards/AdminCommunityModeratio
 import AdminEventManagement from './pages/dashboards/AdminEventManagement.jsx';
 import AdminStrayManagement from './pages/dashboards/AdminStrayManagement.jsx';
 import AdminPharmacyManagement from './pages/dashboards/AdminPharmacyManagement.jsx';
+import AdminPetManagement from './pages/dashboards/AdminPetManagement.jsx';
+import AdminAlertManagement from './pages/dashboards/AdminAlertManagement.jsx';
 
 function App() {
   return (
@@ -83,6 +85,8 @@ function App() {
           <Route path="/dashboard/admin/moderation" element={<AdminCommunityModeration />} />
           <Route path="/dashboard/admin/events" element={<AdminEventManagement />} />
           <Route path="/dashboard/admin/strays" element={<AdminStrayManagement />} />
+          <Route path="/dashboard/admin/pets" element={<AdminPetManagement />} />
+          <Route path="/dashboard/admin/alerts" element={<AdminAlertManagement />} />
         </Route>
       </Routes>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaHome, FaUsers, FaHospital, FaBuilding, FaEnvelope, FaSignOutAlt, FaPaw, FaShieldAlt, FaCalendarAlt, FaMapMarkerAlt, FaPills } from 'react-icons/fa';
+import { FaHome, FaUsers, FaHospital, FaBuilding, FaEnvelope, FaSignOutAlt, FaPaw, FaShieldAlt, FaCalendarAlt, FaMapMarkerAlt, FaPills, FaBell } from 'react-icons/fa';
 
 const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     const navigate = useNavigate();
@@ -18,6 +18,8 @@ const AdminSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         { path: '/dashboard/admin/hospitals', name: 'Hospitals', icon: <FaHospital /> },
         { path: '/dashboard/admin/pharmacies', name: 'Pharmacies', icon: <FaPills /> },
         { path: '/dashboard/admin/strays', name: 'Stray Reports', icon: <FaMapMarkerAlt /> },
+        { path: '/dashboard/admin/pets', name: 'Pet Inventory', icon: <FaPaw /> },
+        { path: '/dashboard/admin/alerts', name: 'Alerts', icon: <FaBell /> },
         { path: '/dashboard/admin/contacts', name: 'Messages', icon: <FaEnvelope /> },
         { path: '/dashboard/admin/moderation', name: 'Moderation', icon: <FaShieldAlt /> },
         { path: '/dashboard/admin/events', name: 'Event Management', icon: <FaCalendarAlt /> },
