@@ -1,5 +1,5 @@
 import express from 'express';
-import { createEvent, getShelterEvents, getPublicEvents, updateEvent, deleteEvent, attendEvent, getAllEventsAdmin } from '../controllers/event.controller.js';
+import { createEvent, getShelterEvents, getPublicEvents, updateEvent, deleteEvent, attendEvent, getAllEventsAdmin, getUserRegisteredEvents } from '../controllers/event.controller.js';
 import { protect, shelterManager, admin } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
@@ -9,6 +9,7 @@ router.get('/public', getPublicEvents);
 
 // User Action Routes
 router.post('/:id/attend', protect, attendEvent);
+router.get('/my-registered-events', protect, getUserRegisteredEvents);
 
 // Shelter Manager Routes
 router.post('/', protect, shelterManager, createEvent);

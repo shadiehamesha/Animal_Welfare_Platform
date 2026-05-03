@@ -1,10 +1,12 @@
 import express from 'express';
-import { createVolunteerTask, getTasks, updateTask, deleteTask, approveVolunteerTask, getPublicTasks } from '../controllers/task.controller.js';
+import { createVolunteerTask, getTasks, updateTask, deleteTask, approveVolunteerTask, getPublicTasks, getUserTasks } from '../controllers/task.controller.js';
 import { protect, shelterManager } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
 router.get('/public', getPublicTasks);
+
+router.get('/my-volunteer-tasks', protect, getUserTasks);
 
 // Shelter Manager Routes
 router.post('/', protect, shelterManager, createVolunteerTask);

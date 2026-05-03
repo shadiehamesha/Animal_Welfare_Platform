@@ -76,3 +76,15 @@ export const approveVolunteerTask = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+export const getUserTasks = async (req, res) => {
+    try {
+        const tasks = await Task.find({ volunteer: req.user._id })
+            .populate('shelter', 'organizationName city contact')
+            .sort({ createdAt: -1 });
+            
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};

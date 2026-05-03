@@ -215,3 +215,17 @@ export const reviewClaim = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+// @desc    Get logged-in user's stray reports
+// @route   GET /api/reports/my-reports
+// @access  Private
+export const getUserReports = async (req, res) => {
+    try {
+        const reports = await Report.find({ reporter: req.user._id })
+            .sort({ createdAt: -1 });
+            
+        res.status(200).json(reports);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};

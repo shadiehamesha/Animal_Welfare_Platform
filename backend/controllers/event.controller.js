@@ -114,3 +114,17 @@ export const getAllEventsAdmin = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+// @desc    Get events the logged-in user is registered for
+// @route   GET /api/events/my-registered-events
+export const getUserRegisteredEvents = async (req, res) => {
+    try {
+        const events = await Event.find({ registeredAttendees: req.user._id })
+            .populate('shelter', 'organizationName city address')
+            .sort({ date: 1 }); // Sort upcoming first
+            
+        res.status(200).json(events);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
