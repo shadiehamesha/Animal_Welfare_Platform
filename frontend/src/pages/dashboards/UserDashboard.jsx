@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { Link } from 'react-router-dom';
-import { FaFileAlt, FaCalendarCheck, FaHandsHelping, FaMapMarkerAlt, FaClock, FaBuilding, FaExclamationCircle } from 'react-icons/fa';
+import { FaFileAlt, FaCalendarCheck, FaHandsHelping, FaMapMarkerAlt, FaClock, FaBuilding, FaExclamationCircle, FaPaw, FaEdit, FaTrash } from 'react-icons/fa';
 import Navbar from '../../components/navigation';
 import Footer from '../../components/footer';
 import UserContactWidget from '../../components/UserContactWidget';
+import UserPetModal from '../../components/modals/UserPetModal';
 
 const UserStatsWidget = ({ stats }) => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5 hover:border-teal-100 transition-colors">
                 <div className="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl shrink-0">
                     <FaFileAlt />
@@ -34,10 +35,75 @@ const UserStatsWidget = ({ stats }) => {
                     <FaHandsHelping />
                 </div>
                 <div>
-                    <p className="text-slate-500 font-semibold text-sm">Active Volunteer Tasks</p>
+                    <p className="text-slate-500 font-semibold text-sm">Active Tasks</p>
                     <p className="text-3xl font-black text-slate-900">{stats.tasks}</p>
                 </div>
             </div>
+
+            <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex items-center gap-5 hover:border-teal-100 transition-colors">
+                <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-500 flex items-center justify-center text-2xl shrink-0">
+                    <FaPaw />
+                </div>
+                <div>
+                    <p className="text-slate-500 font-semibold text-sm">My Pets</p>
+                    <p className="text-3xl font-black text-slate-900">{stats.pets}</p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const UserPetsList = ({ pets, onAdd, onEdit, onDelete }) => {
+    return (
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 lg:p-8 mb-8">
+            <div className="flex justify-between items-center mb-6">
+                <div>
+                    <h2 className="text-xl font-bold text-slate-900">My Pets</h2>
+                    <p className="text-sm text-slate-500 mt-1">Manage profiles for your furry companions.</p>
+                </div>
+                <button onClick={onAdd} className="text-white text-sm font-semibold bg-teal-600 hover:bg-teal-700 px-5 py-2.5 rounded-full transition-colors shadow-sm">
+                    + Add Pet
+                </button>
+            </div>
+
+            {pets.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {pets.map(pet => (
+                        <div key={pet._id} className="group bg-gray-50 border border-gray-100 rounded-[1.5rem] overflow-hidden hover:shadow-md hover:border-teal-100 transition-all">
+                            <div className="w-full h-40 bg-gray-200 relative overflow-hidden">
+                                {pet.photos && pet.photos.length > 0 ? (
+                                    <img src={`http://localhost:5000${pet.photos[0]}`} alt={pet.name} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-4xl bg-teal-50">🐾</div>
+                                )}
+                                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onClick={() => onEdit(pet)} className="w-8 h-8 rounded-full bg-white/90 backdrop-blur text-slate-700 flex items-center justify-center hover:bg-white hover:text-teal-600 shadow-sm transition-colors">
+                                        <FaEdit size={14} />
+                                    </button>
+                                    <button onClick={() => onDelete(pet._id)} className="w-8 h-8 rounded-full bg-white/90 backdrop-blur text-slate-700 flex items-center justify-center hover:bg-white hover:text-red-600 shadow-sm transition-colors">
+                                        <FaTrash size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="p-5">
+                                <h3 className="font-bold text-lg text-slate-900 mb-1">{pet.name}</h3>
+                                <p className="text-sm font-medium text-slate-500 mb-3">{pet.species} • {pet.breed || 'Mixed'}</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="bg-white border border-gray-200 text-slate-600 text-[10px] font-bold px-2 py-1 rounded-md">{pet.age || 'Age N/A'}</span>
+                                    {pet.healthStatus?.vaccinated && <span className="bg-green-50 border border-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-md">Vaccinated</span>}
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-gray-100 rounded-2xl bg-gray-50/50">
+                    <span className="text-4xl mb-3">🐱</span>
+                    <p className="text-slate-800 font-bold mb-1">No pets added yet.</p>
+                    <p className="text-slate-500 text-sm text-center px-4 mb-4">Keep track of your pet's medical info and profile here.</p>
+                    <button onClick={onAdd} className="text-teal-600 font-semibold text-sm hover:underline">Add your first pet</button>
+                </div>
+            )}
         </div>
     );
 };
@@ -166,7 +232,21 @@ const UserDashboard = () => {
     const [reports, setReports] = useState([]);
     const [events, setEvents] = useState([]);
     const [tasks, setTasks] = useState([]);
+    const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    // Modal State
+    const [isPetModalOpen, setIsPetModalOpen] = useState(false);
+    const [selectedPet, setSelectedPet] = useState(null);
+
+    const fetchPets = async (token) => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/pets/user`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) setPets(await res.json());
+        } catch (error) { console.error("Failed to fetch pets:", error); }
+    };
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -195,6 +275,8 @@ const UserDashboard = () => {
                 });
                 if (tasksRes.ok) setTasks(await tasksRes.json());
 
+                await fetchPets(token);
+
             } catch (error) {
                 console.error("Failed to fetch dashboard data:", error);
             } finally {
@@ -204,6 +286,57 @@ const UserDashboard = () => {
 
         fetchDashboardData();
     }, []);
+
+    const handleSavePet = async (formData, petId) => {
+        const token = localStorage.getItem('token');
+        const method = petId ? 'PUT' : 'POST';
+        const url = petId 
+            ? `http://localhost:5000/api/pets/user/${petId}` 
+            : `http://localhost:5000/api/pets/user`;
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: { Authorization: `Bearer ${token}` },
+                body: formData // Sending FormData directly for file upload
+            });
+
+            if (res.ok) {
+                fetchPets(token);
+                setIsPetModalOpen(false);
+            } else {
+                alert('Failed to save pet details.');
+            }
+        } catch (err) { console.error(err); }
+    };
+
+    const handleDeletePet = async (id) => {
+        if (!window.confirm('Are you sure you want to remove this pet from your profile?')) return;
+        
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`http://localhost:5000/api/pets/user/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                fetchPets(token);
+            }
+        } catch (error) {
+            console.error('Failed to delete pet:', error);
+        }
+    };
+
+    const openAddPetModal = () => {
+        setSelectedPet(null);
+        setIsPetModalOpen(true);
+    };
+
+    const openEditPetModal = (pet) => {
+        setSelectedPet(pet);
+        setIsPetModalOpen(true);
+    };
 
     if (loading) {
         return (
@@ -243,8 +376,17 @@ const UserDashboard = () => {
                 <UserStatsWidget stats={{
                     reports: reports.length,
                     events: events.length,
-                    tasks: tasks.length
+                    tasks: tasks.length,
+                    pets: pets.length
                 }} />
+
+                {/* My Pets Section */}
+                <UserPetsList 
+                    pets={pets} 
+                    onAdd={openAddPetModal} 
+                    onEdit={openEditPetModal} 
+                    onDelete={handleDeletePet} 
+                />
 
                 {/* Main Content Grid */}
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -261,6 +403,13 @@ const UserDashboard = () => {
             </main>
 
             <Footer />
+
+            <UserPetModal 
+                isOpen={isPetModalOpen} 
+                onClose={() => setIsPetModalOpen(false)} 
+                onSave={handleSavePet} 
+                pet={selectedPet} 
+            />
 
             {/* Custom Scrollbar Styles specific to the dashboard lists */}
             <style dangerouslySetInnerHTML={{__html: `

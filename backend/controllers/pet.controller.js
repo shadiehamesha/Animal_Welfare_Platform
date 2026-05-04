@@ -3,6 +3,16 @@ import Shelter from '../models/shelter.model.js';
 import User from '../models/user.model.js';
 import { generatePetRecommendations } from '../services/recommendation.service.js';
 
+const processPetData = (reqBody) => {
+    if (typeof reqBody.healthStatus === 'string') {
+        reqBody.healthStatus = JSON.parse(reqBody.healthStatus);
+    }
+    if (reqBody.imageUrl) {
+        reqBody.photos = [reqBody.imageUrl];
+    }
+    return reqBody;
+};
+
 export const getPublicPets = async (req, res) => {
     try {
         const { shelter, size, species } = req.query;
@@ -12,7 +22,7 @@ export const getPublicPets = async (req, res) => {
         if (size) query.size = size;
         if (species) query.species = species;
 
-        const pets = await Pet.find(query).sort({ createdAt: -1 });
+        const pets = await Pet.find(query).populate('shelter').sort({ createdAt: -1 });
         res.status(200).json(pets);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -24,6 +34,56 @@ export const getRecommendations = async (req, res) => {
     try {
         const recommendedPets = await generatePetRecommendations(req.user._id);
         res.status(200).json(recommendedPets);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// --- USER ROUTES ---
+export const getUserPets = async (req, res) => {
+    try {
+        const pets = await Pet.find({ owner: req.user._id }).sort({ createdAt: -1 });
+        res.status(200).json(pets);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const addUserPet = async (req, res) => {
+    try {
+        const processedData = processPetData(req.body);
+        const newPet = new Pet({ 
+            ...processedData, 
+            owner: req.user._id,
+            adoptionStatus: 'Available'
+        });
+        const savedPet = await newPet.save();
+        res.status(201).json(savedPet);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const updateUserPet = async (req, res) => {
+    try {
+        const processedData = processPetData(req.body);
+        const updatedPet = await Pet.findOneAndUpdate(
+            { _id: req.params.id, owner: req.user._id },
+            { $set: processedData },
+            { new: true, runValidators: true }
+        );
+        if (!updatedPet) return res.status(404).json({ message: 'Pet not found or unauthorized' });
+        res.status(200).json(updatedPet);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const deleteUserPet = async (req, res) => {
+    try {
+        const pet = await Pet.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+        if (!pet) return res.status(404).json({ message: 'Pet not found or unauthorized' });
+        res.status(200).json({ message: 'Pet deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
@@ -45,9 +105,10 @@ export const getInventory = async (req, res) => {
 export const addPet = async (req, res) => {
     try {
         const shelter = await Shelter.findOne({ manager: req.user._id });
-        if (!shelter) return res.status(404).json({ message: 'Shelter not found. Create a profile first.' });
+        if (!shelter) return res.status(404).json({ message: 'Shelter not found.' });
 
-        const newPet = new Pet({ ...req.body, shelter: shelter._id });
+        const processedData = processPetData(req.body);
+        const newPet = new Pet({ ...processedData, shelter: shelter._id });
         const savedPet = await newPet.save();
         res.status(201).json(savedPet);
     } catch (error) {
@@ -57,9 +118,10 @@ export const addPet = async (req, res) => {
 
 export const updatePetStatus = async (req, res) => {
     try {
+        const processedData = processPetData(req.body);
         const updatedPet = await Pet.findByIdAndUpdate(
             req.params.id, 
-            { $set: req.body }, 
+            { $set: processedData }, 
             { new: true, runValidators: true }
         );
         if (!updatedPet) return res.status(404).json({ message: 'Pet not found' });
@@ -109,9 +171,10 @@ export const getAllPetsAdmin = async (req, res) => {
 
 export const updatePetAdmin = async (req, res) => {
     try {
+        const processedData = processPetData(req.body);
         const updatedPet = await Pet.findByIdAndUpdate(
             req.params.id,
-            { $set: req.body },
+            { $set: processedData },
             { new: true, runValidators: true }
         ).populate('shelter', 'organizationName city');
         

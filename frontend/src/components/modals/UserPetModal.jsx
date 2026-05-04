@@ -43,10 +43,9 @@ const CustomSelect = ({ name, value, options, onChange }) => {
     );
 };
 
-const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
+const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
     const [formData, setFormData] = useState({
         name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',
-        adoptionStatus: 'Available',
         healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' }
     });
     const [photo, setPhoto] = useState(null);
@@ -61,7 +60,6 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                 age: pet.age || '',
                 size: pet.size || 'Unknown',
                 gender: pet.gender || 'Unknown',
-                adoptionStatus: pet.adoptionStatus || 'Available',
                 healthStatus: { 
                     vaccinated: pet.healthStatus?.vaccinated || false, 
                     sterilized: pet.healthStatus?.sterilized || false, 
@@ -70,6 +68,10 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
             });
             setPreviewUrl(pet.photos && pet.photos.length > 0 ? `http://localhost:5000${pet.photos[0]}` : null);
         } else {
+            setFormData({
+                name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',
+                healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' }
+            });
             setPreviewUrl(null);
         }
         setPhoto(null);
@@ -100,7 +102,6 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        // Convert to FormData to support file upload
         const payload = new FormData();
         payload.append('name', formData.name);
         payload.append('species', formData.species);
@@ -108,8 +109,7 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
         payload.append('age', formData.age);
         payload.append('size', formData.size);
         payload.append('gender', formData.gender);
-        payload.append('adoptionStatus', formData.adoptionStatus);
-        payload.append('healthStatus', JSON.stringify(formData.healthStatus)); // Send nested obj as string
+        payload.append('healthStatus', JSON.stringify(formData.healthStatus));
 
         if (photo) {
             payload.append('photo', photo);
@@ -124,8 +124,8 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                 
                 <div className="flex justify-between items-center mb-6 border-b border-gray-100 pb-4 shrink-0">
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-900">{pet ? 'Edit Pet Details' : 'Add New Pet'}</h2>
-                        {pet?.shelter && <p className="text-sm text-teal-600 font-semibold mt-1">Shelter: {pet.shelter.organizationName}</p>}
+                        <h2 className="text-2xl font-bold text-slate-900">{pet ? 'Edit Your Pet' : 'Add New Pet'}</h2>
+                        <p className="text-sm text-slate-500 mt-1">Keep your pet's information up to date.</p>
                     </div>
                     <button onClick={onClose} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:bg-gray-200 transition-colors">
                         <FaTimes />
@@ -133,16 +133,15 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                 </div>
                 
                 <div className="overflow-y-auto px-2 py-2 custom-scrollbar">
-                    <form id="adminPetForm" onSubmit={handleSubmit} className="space-y-5">
+                    <form id="userPetForm" onSubmit={handleSubmit} className="space-y-5">
                         
-                        {/* Photo Upload Section */}
                         <div className="flex flex-col items-center justify-center p-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl relative overflow-hidden group">
                             {previewUrl ? (
                                 <img src={previewUrl} alt="Pet preview" className="w-full h-40 object-cover rounded-xl" />
                             ) : (
                                 <div className="text-center py-6">
                                     <FaCamera className="mx-auto text-3xl text-gray-400 mb-2" />
-                                    <p className="text-sm text-gray-500 font-medium">Click to upload pet photo</p>
+                                    <p className="text-sm text-gray-500 font-medium">Click to upload a photo of your pet</p>
                                 </div>
                             )}
                             <input 
@@ -161,7 +160,7 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="sm:col-span-2">
                                 <label className="block text-sm font-semibold text-slate-800 mb-1">Name</label>
-                                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" />
+                                <input type="text" name="name" value={formData.name} onChange={handleChange} required className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" placeholder="Your pet's name" />
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-800 mb-1">Species</label>
@@ -169,18 +168,23 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                             </div>
                             <div>
                                 <label className="block text-sm font-semibold text-slate-800 mb-1">Breed</label>
-                                <input type="text" name="breed" value={formData.breed} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" />
+                                <input type="text" name="breed" value={formData.breed} onChange={handleChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" placeholder="e.g. Golden Retriever" />
                             </div>
 
                             <div>
                                 <label className="block text-sm font-semibold text-slate-800 mb-1">Age</label>
-                                <input type="text" name="age" value={formData.age} onChange={handleChange} placeholder="e.g. 2 months" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" />
+                                <input type="text" name="age" value={formData.age} onChange={handleChange} placeholder="e.g. 2 years" className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm" />
                             </div>
                             <div>
-                                <label className="block text-sm font-semibold text-slate-800 mb-1">Status</label>
-                                <CustomSelect name="adoptionStatus" value={formData.adoptionStatus} options={['Available', 'Pending Review', 'Adopted', 'Fostered']} onChange={handleChange} />
+                                <label className="block text-sm font-semibold text-slate-800 mb-1">Gender</label>
+                                <CustomSelect name="gender" value={formData.gender} options={['Male', 'Female', 'Unknown']} onChange={handleChange} />
+                            </div>
+                             <div>
+                                <label className="block text-sm font-semibold text-slate-800 mb-1">Size</label>
+                                <CustomSelect name="size" value={formData.size} options={['Small', 'Medium', 'Large', 'Unknown']} onChange={handleChange} />
                             </div>
                         </div>
+                        
                         <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 mt-4">
                             <h3 className="text-sm font-bold text-slate-800 mb-4">Health & Medical</h3>
                             <div className="flex gap-6 mb-4">
@@ -190,12 +194,12 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                                 </label>
                                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 cursor-pointer">
                                     <input type="checkbox" name="sterilized" checked={formData.healthStatus.sterilized} onChange={handleNestedChange} className="w-4 h-4 text-teal-600 bg-white border-gray-300 rounded focus:ring-teal-500" />
-                                    Sterilized
+                                    Spayed / Neutered
                                 </label>
                             </div>
                             <div>
-                                <label className="block text-xs font-semibold text-slate-500 mb-1">Medical Notes</label>
-                                <textarea name="medicalNotes" value={formData.healthStatus.medicalNotes} onChange={handleNestedChange} rows="2" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm resize-none"></textarea>
+                                <label className="block text-xs font-semibold text-slate-500 mb-1">Medical Notes (Optional)</label>
+                                <textarea name="medicalNotes" value={formData.healthStatus.medicalNotes} onChange={handleNestedChange} rows="2" placeholder="Any allergies or current medications?" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm resize-none"></textarea>
                             </div>
                         </div>
                     </form>
@@ -205,8 +209,8 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
                     <button type="button" onClick={onClose} className="flex-1 px-6 py-3.5 border border-gray-200 text-slate-600 font-bold rounded-full hover:bg-gray-50 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" form="adminPetForm" className="flex-1 px-6 py-3.5 bg-teal-600 text-white font-bold rounded-full hover:bg-teal-700 transition-colors shadow-md">
-                        Save Changes
+                    <button type="submit" form="userPetForm" className="flex-1 px-6 py-3.5 bg-teal-600 text-white font-bold rounded-full hover:bg-teal-700 transition-colors shadow-md">
+                        Save Pet
                     </button>
                 </div>
 
@@ -215,4 +219,4 @@ const AdminPetModal = ({ isOpen, onClose, onSave, pet }) => {
     );
 };
 
-export default AdminPetModal;
+export default UserPetModal;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
-import { FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle, FaEdit, FaTrash, FaUsers } from 'react-icons/fa';
+import { FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle, FaEdit, FaTrash, FaUsers, FaCamera } from 'react-icons/fa';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
@@ -113,6 +113,8 @@ const OrganizationDashboard = () => {
         contact: { phone: '', email: '', website: '' }
     });
     const [petForm, setPetForm] = useState(defaultPetForm);
+    const [photo, setPhoto] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
     const [eventForm, setEventForm] = useState(defaultEventForm);
     const [taskForm, setTaskForm] = useState(defaultTaskForm);
     const [bulkImportData, setBulkImportData] = useState('');
@@ -211,6 +213,8 @@ const OrganizationDashboard = () => {
     const openAddPetModal = () => {
         setEditingPetId(null);
         setPetForm(defaultPetForm);
+        setPhoto(null);
+        setPreviewUrl(null);
         setIsPetModalOpen(true);
     };
 
@@ -227,7 +231,16 @@ const OrganizationDashboard = () => {
             adoptionStatus: pet.adoptionStatus || 'Available',
             description: pet.description || ''
         });
+        setPhoto(null);
+        setPreviewUrl(pet.photos && pet.photos.length > 0 ? `http://localhost:5000${pet.photos[0]}` : null);
         setIsPetModalOpen(true);
+    };
+
+    const handlePhotoChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setPhoto(e.target.files[0]);
+            setPreviewUrl(URL.createObjectURL(e.target.files[0]));
+        }
     };
 
     const handlePetSubmit = async (e) => {
@@ -237,10 +250,25 @@ const OrganizationDashboard = () => {
         const method = editingPetId ? 'PUT' : 'POST';
 
         try {
+            const payload = new FormData();
+            payload.append('name', petForm.name);
+            payload.append('species', petForm.species);
+            payload.append('breed', petForm.breed);
+            payload.append('age', petForm.age);
+            payload.append('size', petForm.size);
+            payload.append('gender', petForm.gender);
+            payload.append('adoptionStatus', petForm.adoptionStatus);
+            payload.append('description', petForm.description);
+            payload.append('healthStatus', JSON.stringify(petForm.healthStatus));
+
+            if (photo) {
+                payload.append('photo', photo);
+            }
+
             const res = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify(petForm)
+                headers: { Authorization: `Bearer ${token}` },
+                body: payload
             });
             if (res.ok) {
                 fetchPets(token);
@@ -248,6 +276,8 @@ const OrganizationDashboard = () => {
                 setIsPetModalOpen(false);
                 setPetForm(defaultPetForm);
                 setEditingPetId(null);
+                setPhoto(null);
+                setPreviewUrl(null);
             }
         } catch (err) { console.error(err); }
     };
@@ -805,6 +835,30 @@ const OrganizationDashboard = () => {
                             <button onClick={() => setIsPetModalOpen(false)} className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-slate-500 hover:bg-gray-200">✕</button>
                         </div>
                         <form onSubmit={handlePetSubmit} className="space-y-4">
+
+                            {/* Photo Upload Section */}
+                            <div className="flex flex-col items-center justify-center p-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl relative overflow-hidden group">
+                                {previewUrl ? (
+                                    <img src={previewUrl} alt="Pet preview" className="w-full h-40 object-cover rounded-xl" />
+                                ) : (
+                                    <div className="text-center py-6">
+                                        <FaCamera className="mx-auto text-3xl text-gray-400 mb-2" />
+                                        <p className="text-sm text-gray-500 font-medium">Click to upload pet photo</p>
+                                    </div>
+                                )}
+                                <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    onChange={handlePhotoChange} 
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                />
+                                {previewUrl && (
+                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                        <p className="text-white font-bold">Change Photo</p>
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="col-span-2">
                                     <label className={labelClasses}>Pet Name *</label>

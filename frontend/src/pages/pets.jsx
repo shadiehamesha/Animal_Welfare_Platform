@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/navigation.jsx';
 import Footer from '../components/footer.jsx';
 import PetFilterBar from '../components/PetFilterBar.jsx';
+import PublicPetModal from '../components/modals/PublicPetModal.jsx';
 import { FaHeart, FaMapMarkerAlt, FaInfoCircle } from 'react-icons/fa';
 
 const Pets = () => {
@@ -9,6 +10,10 @@ const Pets = () => {
     const [recommendedPets, setRecommendedPets] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    
+    // Modal State
+    const [selectedPet, setSelectedPet] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     const [filters, setFilters] = useState({
         search: '', species: '', size: '', age: '', sort: 'newest'
@@ -42,7 +47,11 @@ const Pets = () => {
         fetchPetsData();
     }, []);
 
-    // Filter Logic
+    const openModal = (pet) => {
+        setSelectedPet(pet);
+        setIsModalOpen(true);
+    };
+
     const filteredPets = pets.filter(pet => {
         const searchMatch = !filters.search || 
             pet.name.toLowerCase().includes(filters.search.toLowerCase()) || 
@@ -65,7 +74,7 @@ const Pets = () => {
             )}
             <div className="h-56 bg-gray-100 overflow-hidden relative">
                 {pet.photos && pet.photos.length > 0 ? (
-                    <img src={pet.photos[0]} alt={pet.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={`http://localhost:5000${pet.photos[0]}`} alt={pet.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl bg-teal-50/50">
                         {pet.species === 'Cat' ? '🐱' : pet.species === 'Dog' ? '🐶' : '🐾'}
@@ -85,9 +94,12 @@ const Pets = () => {
                     {pet.healthStatus?.sterilized && <span className="bg-purple-50 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded">Sterilized</span>}
                 </div>
 
+                {/* Updated Action Area */}
                 <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
-                    <span className="text-xs text-slate-400 flex items-center gap-1.5"><FaMapMarkerAlt /> View Shelter</span>
-                    <button className="text-teal-600 hover:text-teal-800 font-bold text-sm transition-colors flex items-center gap-1">
+                    <button onClick={() => openModal(pet)} className="text-xs text-slate-400 hover:text-teal-600 font-semibold transition-colors flex items-center gap-1.5">
+                        <FaMapMarkerAlt /> View Shelter
+                    </button>
+                    <button onClick={() => openModal(pet)} className="text-teal-600 hover:text-teal-800 font-bold text-sm transition-colors flex items-center gap-1">
                         Meet {pet.name} <span className="text-lg leading-none">&rarr;</span>
                     </button>
                 </div>
@@ -155,6 +167,14 @@ const Pets = () => {
                     </>
                 )}
             </main>
+
+            {/* Render the Modal */}
+            <PublicPetModal 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                pet={selectedPet} 
+            />
+
             <Footer />
         </div>
     );
