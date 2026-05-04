@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import ModernTimePicker from '../../utils/ModernTimePicker';
 
 const HospitalModal = ({ isOpen, onClose, onSave, hospital }) => {
@@ -11,6 +12,8 @@ const HospitalModal = ({ isOpen, onClose, onSave, hospital }) => {
         hours: { open: '09:00', close: '17:00', is24_7: false },
         contact: { phone: '', email: '', website: '' }
     });
+
+    const MAPS_API_KEY = import.meta.env.VITE_MAPS || import.meta.env.VITE_MAPS_API_KEY || "";
 
     useEffect(() => {
         if (hospital) {
@@ -60,6 +63,15 @@ const HospitalModal = ({ isOpen, onClose, onSave, hospital }) => {
         }));
     };
 
+    const handleMapClick = (e) => {
+        if (e.detail.latLng) {
+            setFormData(prev => ({
+                ...prev,
+                location: { lat: e.detail.latLng.lat, lng: e.detail.latLng.lng }
+            }));
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         onSave(formData, hospital ? hospital._id : null);
@@ -97,15 +109,29 @@ const HospitalModal = ({ isOpen, onClose, onSave, hospital }) => {
                             </div>
                         </div>
 
-                        {/* Map Coordinates */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-800 mb-1">Latitude</label>
-                                <input type="number" step="any" name="lat" value={formData.location.lat} onChange={(e) => handleNestedChange(e, 'location')} required className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all" />
+                        {/* Interactive Map for Coordinates */}
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                            <label className="block text-sm font-bold text-slate-800 mb-1">Exact Location *</label>
+                            <p className="text-xs text-slate-500 mb-3">Click on the map to pinpoint the hospital's coordinates.</p>
+                            
+                            <div className="w-full h-[250px] rounded-xl overflow-hidden border border-gray-200 mb-3 focus-within:border-teal-500 transition-all">
+                                <APIProvider apiKey={MAPS_API_KEY}>
+                                    <Map
+                                        defaultCenter={formData.location}
+                                        defaultZoom={12}
+                                        mapId="HOSPITAL_MODAL_MAP_ID"
+                                        disableDefaultUI={true}
+                                        zoomControl={true}
+                                        onClick={handleMapClick}
+                                    >
+                                        <Marker position={formData.location} />
+                                    </Map>
+                                </APIProvider>
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-slate-800 mb-1">Longitude</label>
-                                <input type="number" step="any" name="lng" value={formData.location.lng} onChange={(e) => handleNestedChange(e, 'location')} required className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all" />
+                            
+                            <div className="flex gap-4 text-xs font-mono text-slate-500 bg-white p-2 rounded-lg border border-gray-100 w-max">
+                                <span>Lat: {formData.location.lat.toFixed(5)}</span>
+                                <span>Lng: {formData.location.lng.toFixed(5)}</span>
                             </div>
                         </div>
 
