@@ -232,7 +232,7 @@ const OrganizationDashboard = () => {
             description: pet.description || ''
         });
         setPhoto(null);
-        setPreviewUrl(pet.photos && pet.photos.length > 0 ? `http://localhost:5000${pet.photos[0]}` : null);
+        setPreviewUrl(pet.photos && pet.photos.length > 0 ? pet.photos[0] : null);
         setIsPetModalOpen(true);
     };
 

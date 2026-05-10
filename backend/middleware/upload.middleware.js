@@ -1,6 +1,6 @@
 import multer from 'multer';
-import fs from 'fs/promises';
-import path from 'path';
+import streamifier from 'streamifier';
+import cloudinary from '../config/cloudinary.js';
 import { generateImageHash } from '../utils/hash.util.js';
 
 // Configure multer to use memory storage
@@ -23,7 +23,7 @@ export const upload = multer({
 
 /**
  * Middleware to intercept the uploaded file, generate the hash, 
- * save it to the local filesystem, and pass to the controller.
+ * upload it to Cloudinary via stream, and pass the URL to the controller.
  */
 export const processAndHashImage = async (req, res, next) => {
     if (!req.file) {
@@ -31,32 +31,39 @@ export const processAndHashImage = async (req, res, next) => {
     }
 
     try {
-        // Generate the perceptual hash from the memory buffer
+        // Generate the perceptual hash from the memory buffer for deduplication
         const hash = await generateImageHash(req.file.buffer);
         
         // Attach the hash to the request body for the controller
         req.body.imageHash = hash;
 
-        // Ensure the uploads directory exists
-        const uploadsDir = path.join(process.cwd(), 'uploads');
-        try {
-            await fs.access(uploadsDir);
-        } catch {
-            await fs.mkdir(uploadsDir, { recursive: true });
-        }
+        // Create a promise to handle the stream upload to Cloudinary
+        const streamUpload = (req) => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'meowoof_uploads' },
+                    (error, result) => {
+                        if (result) {
+                            resolve(result);
+                        } else {
+                            reject(error);
+                        }
+                    }
+                );
+                // Convert the memory buffer into a readable stream
+                streamifier.createReadStream(req.file.buffer).pipe(stream);
+            });
+        };
 
-        // Generate a unique filename and save to disk
-        const ext = path.extname(req.file.originalname) || '.jpg';
-        const filename = `stray-${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
-        const filepath = path.join(uploadsDir, filename);
-        
-        await fs.writeFile(filepath, req.file.buffer);
+        // Execute the upload
+        const result = await streamUpload(req);
 
-        // Store the real URL path in the payload
-        req.body.imageUrl = `/uploads/${filename}`;
+        // Store the secure Cloudinary URL in the payload.
+        req.body.imageUrl = result.secure_url;
 
         next();
     } catch (error) {
+        console.error('Cloudinary upload error:', error);
         res.status(500).json({ message: 'Error processing image upload', error: error.message });
     }
 };

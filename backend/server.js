@@ -38,9 +38,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// Serve uploaded media files from the 'uploads' folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/contacts', contactRoutes);

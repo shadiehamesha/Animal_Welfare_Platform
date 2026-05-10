@@ -1,5 +1,6 @@
 import Report from '../models/report.model.js';
 import Alert from '../models/alert.model.js';
+import { deleteImageFromCloudinary } from '../utils/cloudinary.util.js';
 
 // Utility: Calculate the Hamming distance between two hash strings
 const calculateHammingDistance = (hash1, hash2) => {
@@ -46,6 +47,8 @@ export const submitReport = async (req, res) => {
 
             // Catch duplicate re-uploads
             if (potentialDuplicate) {
+                if (imageUrl) await deleteImageFromCloudinary(imageUrl);
+
                 return res.status(409).json({
                     message: 'Potential duplicate detected. Is this the same animal?',
                     duplicateRecord: potentialDuplicate
@@ -183,8 +186,18 @@ export const getAllReportsAdmin = async (req, res) => {
 
 export const deleteReportAdmin = async (req, res) => {
     try {
-        const report = await Report.findByIdAndDelete(req.params.id);
+        const report = await Report.findById(req.params.id);
         if (!report) return res.status(404).json({ message: 'Report not found' });
+
+        if (report.imageUrl) {
+            await deleteImageFromCloudinary(report.imageUrl);
+        }
+
+        if (report.claimProofUrl) {
+            await deleteImageFromCloudinary(report.claimProofUrl);
+        }
+
+        await report.deleteOne();
         res.status(200).json({ message: 'Report completely deleted from the system' });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -202,6 +215,10 @@ export const reviewClaim = async (req, res) => {
             report.claimStatus = 'Verified';
             report.status = 'Resolved';
         } else if (action === 'reject') {
+            // Delete the rejected proof image from Cloudinary to save space
+            if (report.claimProofUrl) {
+                await deleteImageFromCloudinary(report.claimProofUrl);
+            }
             report.claimStatus = 'Rejected';
             report.claimProofUrl = null;
             report.claimedBy = null;

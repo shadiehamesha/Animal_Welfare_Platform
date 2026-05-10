@@ -164,7 +164,7 @@ const StrayMap = () => {
                     <div className="absolute bottom-6 left-4 right-4 md:left-auto md:right-6 md:top-24 md:bottom-auto w-auto md:w-[400px] bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden z-20 flex flex-col max-h-[80vh] animate-fade-in-up">
                         <div className="relative h-56 bg-gray-100 shrink-0">
                             <img 
-                                src={`http://localhost:5000${selectedReport.imageUrl}`} 
+                                src={selectedReport.imageUrl} 
                                 alt="Reported Animal" 
                                 className="w-full h-full object-cover"
                             />

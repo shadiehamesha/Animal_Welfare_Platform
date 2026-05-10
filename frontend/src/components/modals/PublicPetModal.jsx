@@ -6,8 +6,7 @@ const PublicPetModal = ({ isOpen, onClose, pet }) => {
     if (!pet) return null;
 
     const photoUrl = pet.photos && pet.photos.length > 0 
-        ? `http://localhost:5000${pet.photos[0]}` 
-        : null;
+        ? pet.photos[0] : null;
 
     return (
         <Modal 

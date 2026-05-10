@@ -66,7 +66,7 @@ const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
                     medicalNotes: pet.healthStatus?.medicalNotes || '' 
                 }
             });
-            setPreviewUrl(pet.photos && pet.photos.length > 0 ? `http://localhost:5000${pet.photos[0]}` : null);
+            setPreviewUrl(pet.photos && pet.photos.length > 0 ? pet.photos[0] : null);
         } else {
             setFormData({
                 name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',

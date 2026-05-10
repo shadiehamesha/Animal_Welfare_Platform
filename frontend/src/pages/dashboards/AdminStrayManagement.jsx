@@ -302,7 +302,7 @@ const AdminStrayManagement = () => {
                                                         <div className="flex items-center gap-4">
                                                             <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
                                                                 <img 
-                                                                    src={`http://localhost:5000${report.imageUrl}`} 
+                                                                    src={report.imageUrl} 
                                                                     alt="Stray" 
                                                                     className="w-full h-full object-cover"
                                                                 />
@@ -402,7 +402,7 @@ const AdminStrayManagement = () => {
                                         <h3 className="font-bold text-slate-800">Original Report Photo</h3>
                                     </div>
                                     <img 
-                                        src={`http://localhost:5000${selectedReport.imageUrl}`} 
+                                        src={selectedReport.imageUrl} 
                                         alt="Original Stray" 
                                         className="w-full h-64 object-cover rounded-xl border border-gray-100 mb-4"
                                     />
@@ -423,7 +423,7 @@ const AdminStrayManagement = () => {
                                         <h3 className="font-bold text-slate-800">Claimant's Proof</h3>
                                     </div>
                                     <img 
-                                        src={`http://localhost:5000${selectedReport.claimProofUrl}`} 
+                                        src={selectedReport.claimProofUrl} 
                                         alt="Claim Proof" 
                                         className="w-full h-64 object-cover rounded-xl border border-gray-100 mb-4"
                                     />

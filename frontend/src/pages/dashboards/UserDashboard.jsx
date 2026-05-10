@@ -72,7 +72,7 @@ const UserPetsList = ({ pets, onAdd, onEdit, onDelete }) => {
                         <div key={pet._id} className="group bg-gray-50 border border-gray-100 rounded-[1.5rem] overflow-hidden hover:shadow-md hover:border-teal-100 transition-all">
                             <div className="w-full h-40 bg-gray-200 relative overflow-hidden">
                                 {pet.photos && pet.photos.length > 0 ? (
-                                    <img src={`http://localhost:5000${pet.photos[0]}`} alt={pet.name} className="w-full h-full object-cover" />
+                                    <img src={pet.photos[0]} alt={pet.name} className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-4xl bg-teal-50">🐾</div>
                                 )}
@@ -125,7 +125,7 @@ const UserReportsList = ({ reports }) => {
                             {/* Image Placeholder or Actual Image */}
                             <div className="w-16 h-16 rounded-xl bg-gray-200 shrink-0 overflow-hidden">
                                 {report.imageUrl ? (
-                                    <img src={`http://localhost:5000${report.imageUrl}`} alt="Stray" className="w-full h-full object-cover" />
+                                    <img src={report.imageUrl} alt="Stray" className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-2xl">🐾</div>
                                 )}
