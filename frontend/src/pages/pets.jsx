@@ -74,7 +74,7 @@ const Pets = () => {
             )}
             <div className="h-56 bg-gray-100 overflow-hidden relative">
                 {pet.photos && pet.photos.length > 0 ? (
-                    <img src={`http://localhost:5000${pet.photos[0]}`} alt={pet.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={pet.photos[0]} alt={pet.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-4xl bg-teal-50/50">
                         {pet.species === 'Cat' ? '🐱' : pet.species === 'Dog' ? '🐶' : '🐾'}
