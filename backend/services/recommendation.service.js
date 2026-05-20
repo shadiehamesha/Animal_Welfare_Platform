@@ -35,7 +35,18 @@ export const generatePetRecommendations = async (userId) => {
     const pipeline = [
         // Filter down to available pets
         { $match: { adoptionStatus: 'Available' } },
-        
+
+        // Fetch shelter data
+        {
+            $lookup: {
+                from: 'shelters',
+                localField: 'shelter',
+                foreignField: '_id',
+                as: 'shelter'
+            }
+        },
+        { $unwind: { path: '$shelter', preserveNullAndEmptyArrays: true } },
+            
         // calculate the Recommendation Score for each pet
         {
             $addFields: {
@@ -48,7 +59,7 @@ export const generatePetRecommendations = async (userId) => {
                         { $cond: [{ $in: ["$size", preferredSizes] }, 2, 0] },
                         
                         // Add 5 points if the pet is at a shelter the user has interacted with
-                        { $cond: [{ $in: ["$shelter", uniqueInteractedShelters] }, 5, 0] }
+                        { $cond: [{ $in: ["$shelter._id", uniqueInteractedShelters] }, 5, 0] }
                     ]
                 }
             }
