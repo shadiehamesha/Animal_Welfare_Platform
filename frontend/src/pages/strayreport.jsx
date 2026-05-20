@@ -350,7 +350,7 @@ const StrayReport = () => {
                         </div>
                         
                         <div className="bg-gray-50 rounded-2xl border border-gray-200 p-4 mb-6">
-                            <img src={`http://localhost:5000${duplicateWarning.imageUrl}`} alt="Existing Report" className="w-full h-48 object-cover rounded-xl mb-3" />
+                            <img src={duplicateWarning.imageUrl} alt="Existing Report" className="w-full h-48 object-cover rounded-xl mb-3" />
                             <p className="text-sm font-medium text-slate-700"><strong className="text-slate-900">Existing Description:</strong> {duplicateWarning.description}</p>
                             <p className="text-xs text-slate-500 mt-2">Reported on: {new Date(duplicateWarning.createdAt).toLocaleDateString()}</p>
                         </div>
