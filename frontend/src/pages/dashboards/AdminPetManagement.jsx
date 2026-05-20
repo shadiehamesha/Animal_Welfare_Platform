@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { FaSearch, FaPaw, FaTrash, FaEdit, FaCheckCircle, FaBuilding } from 'react-icons/fa';
+import { FaSearch, FaPaw, FaTrash, FaEdit, FaCheckCircle, FaBuilding, FaUser } from 'react-icons/fa';
 import AdminSidebar from '../../components/AdminSidebar';
 import AdminPetModal from '../../components/modals/AdminPetModal';
 
@@ -79,7 +79,8 @@ const AdminPetManagement = () => {
             p.name?.toLowerCase().includes(query) || 
             p.species?.toLowerCase().includes(query) ||
             p.breed?.toLowerCase().includes(query) ||
-            p.shelter?.organizationName?.toLowerCase().includes(query)
+            p.shelter?.organizationName?.toLowerCase().includes(query) ||
+            p.owner?.name?.toLowerCase().includes(query)
         );
         setFilteredPets(results);
     }, [searchQuery, pets]);
@@ -196,7 +197,7 @@ const AdminPetManagement = () => {
                                 <FaSearch className="text-slate-400 mr-3" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search by name, breed, species, or shelter..." 
+                                    placeholder="Search by name, breed, species, shelter, or owner..." 
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-full bg-transparent focus:outline-none text-sm text-slate-700"
@@ -211,7 +212,7 @@ const AdminPetManagement = () => {
                                     <thead>
                                         <tr className="bg-gray-50 border-b border-gray-100">
                                             <th className="py-4 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider">Pet Details</th>
-                                            <th className="py-4 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider">Shelter</th>
+                                            <th className="py-4 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider">Shelter / Owner</th>
                                             <th className="py-4 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider">Health Info</th>
                                             <th className="py-4 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider">Status</th>
                                             <th className="py-4 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider text-right">Actions</th>
@@ -247,8 +248,22 @@ const AdminPetManagement = () => {
                                                     </td>
                                                     <td className="py-4 px-6">
                                                         <div className="flex items-center gap-2 text-sm text-slate-700">
-                                                            <FaBuilding className="text-teal-500 shrink-0" /> 
-                                                            <span className="font-medium truncate max-w-[150px]">{pet.shelter?.organizationName || 'Unknown'}</span>
+                                                            {pet.shelter ? (
+                                                                <>
+                                                                    <FaBuilding className="text-teal-500 shrink-0" /> 
+                                                                    <span className="font-medium truncate max-w-[150px]">{pet.shelter.organizationName}</span>
+                                                                </>
+                                                            ) : pet.owner ? (
+                                                                <>
+                                                                    <FaUser className="text-teal-500 shrink-0" /> 
+                                                                    <span className="font-medium truncate max-w-[150px]">{pet.owner.name || 'Individual Owner'}</span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <FaBuilding className="text-gray-400 shrink-0" /> 
+                                                                    <span className="font-medium text-gray-500 truncate max-w-[150px]">Unknown</span>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     </td>
                                                     <td className="py-4 px-6">

@@ -182,6 +182,7 @@ export const getAllPetsAdmin = async (req, res) => {
     try {
         const pets = await Pet.find()
             .populate('shelter', 'organizationName city')
+            .populate('owner', 'name email')
             .sort({ createdAt: -1 });
         res.status(200).json(pets);
     } catch (error) {
@@ -196,7 +197,9 @@ export const updatePetAdmin = async (req, res) => {
             req.params.id,
             { $set: processedData },
             { new: true, runValidators: true }
-        ).populate('shelter', 'organizationName city');
+        )
+        .populate('shelter', 'organizationName city')
+        .populate('owner', 'name email');
         
         if (!updatedPet) return res.status(404).json({ message: 'Pet not found' });
         res.status(200).json(updatedPet);
