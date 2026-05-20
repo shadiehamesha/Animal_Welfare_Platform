@@ -69,3 +69,17 @@ export const pharmacyManager = (req, res, next) => {
         res.status(403).json({ message: 'Not authorized as pharmacy manager' });
     }
 };
+
+export const optionalProtect = async (req, res, next) => {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+        try {
+            const token = req.headers.authorization.split(' ')[1];
+            const decoded = jwt.verify(token, JWT_SECRET);
+            req.user = await User.findById(decoded.id).select('-passwordHash');
+        } catch (error) {
+            // Token is invalid, but we allow anonymous submission
+            console.error('Optional auth failed:', error.message);
+        }
+    }
+    next();
+};

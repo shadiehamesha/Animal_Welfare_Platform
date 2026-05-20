@@ -1,12 +1,12 @@
 import express from 'express';
 import { submitReport, getPublicReports, getHeatmapAnalytics, claimReport, getAllReportsAdmin, deleteReportAdmin, reviewClaim, getUserReports } from '../controllers/report.controller.js';
-import { protect, admin } from '../middleware/auth.middleware.js';
+import { protect, admin, optionalProtect } from '../middleware/auth.middleware.js';
 import { upload, processAndHashImage } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
 // Public Routes
-router.post('/', upload.single('image'), processAndHashImage, submitReport); 
+router.post('/', optionalProtect, upload.single('image'), processAndHashImage, submitReport); 
 router.get('/public', getPublicReports);
 
 // User Routes

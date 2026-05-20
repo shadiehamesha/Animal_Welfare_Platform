@@ -138,7 +138,10 @@ const StrayReport = () => {
         if (force) formData.append('forceSubmit', 'true');
 
         const token = localStorage.getItem('token');
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
         try {
             const res = await fetch('http://localhost:5000/api/reports', {
@@ -152,7 +155,7 @@ const StrayReport = () => {
             if (res.status === 201) {
                 setMessage({ type: 'success', text: reportType === 'Lost' ? 'Lost pet alert broadcasted to the community!' : 'Stray reported successfully!' });
                 setDuplicateWarning(null);
-                setTimeout(() => navigate('/map'), 2000);
+                setTimeout(() => navigate('/map'), 1000);
             } else if (res.status === 409) {
                 setDuplicateWarning(data.duplicateRecord);
             } else {
