@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaSyringe, FaBuilding, FaCheckCircle, FaStethoscope } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaSyringe, FaBuilding, FaCheckCircle, FaStethoscope, FaUser } from 'react-icons/fa';
 import Modal from './OrganizationModal';
 
 const PublicPetModal = ({ isOpen, onClose, pet }) => {
@@ -57,7 +57,7 @@ const PublicPetModal = ({ isOpen, onClose, pet }) => {
                     </div>
                 </div>
 
-                {/* Right Column: Details & Shelter Info */}
+                {/* Right Column: Details & Shelter/Owner Info */}
                 <div className="space-y-6">
                     <div>
                         <h3 className="text-3xl font-black text-slate-900 mb-2">{pet.name}</h3>
@@ -78,7 +78,8 @@ const PublicPetModal = ({ isOpen, onClose, pet }) => {
                         </div>
                     )}
 
-                    {pet.shelter && (
+                    {/* Conditional rendering for Shelter OR Owner contact info */}
+                    {pet.shelter ? (
                         <div className="pt-6 mt-6 border-t border-gray-100">
                             <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
                                 <FaBuilding className="text-teal-600 text-lg" /> Hosted By
@@ -109,7 +110,27 @@ const PublicPetModal = ({ isOpen, onClose, pet }) => {
                                 </div>
                             </div>
                         </div>
-                    )}
+                    ) : pet.owner ? (
+                        <div className="pt-6 mt-6 border-t border-gray-100">
+                            <h4 className="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <FaUser className="text-teal-600 text-lg" /> Listed By Individual
+                            </h4>
+                            <div className="bg-white rounded-2xl p-6 border border-teal-100 shadow-[0_4px_20px_rgb(13,148,136,0.05)]">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <h5 className="font-bold text-lg text-slate-900">{pet.owner.name}</h5>
+                                </div>
+                                
+                                <div className="space-y-3 mt-4 text-sm">
+                                    {pet.owner.email && (
+                                        <div className="flex items-center gap-3 text-slate-700">
+                                            <FaEnvelope className="text-teal-500 shrink-0" /> 
+                                            <span className="font-medium">{pet.owner.email}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </Modal>

@@ -97,7 +97,7 @@ const Pets = () => {
                 {/* Updated Action Area */}
                 <div className="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between">
                     <button onClick={() => openModal(pet)} className="text-xs text-slate-400 hover:text-teal-600 font-semibold transition-colors flex items-center gap-1.5">
-                        <FaMapMarkerAlt /> View Shelter
+                        <FaMapMarkerAlt /> {pet.shelter ? 'View Shelter' : 'View Contact'}
                     </button>
                     <button onClick={() => openModal(pet)} className="text-teal-600 hover:text-teal-800 font-bold text-sm transition-colors flex items-center gap-1">
                         Meet {pet.name} <span className="text-lg leading-none">&rarr;</span>

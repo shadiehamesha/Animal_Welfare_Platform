@@ -23,7 +23,8 @@ export const getPublicPets = async (req, res) => {
         if (size) query.size = size;
         if (species) query.species = species;
 
-        const pets = await Pet.find(query).populate('shelter').sort({ createdAt: -1 });
+        const pets = await Pet.find(query).populate('shelter').populate('owner', 'name email').sort({ createdAt: -1 });
+            
         res.status(200).json(pets);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

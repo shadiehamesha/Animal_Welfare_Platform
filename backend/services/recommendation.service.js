@@ -47,6 +47,20 @@ export const generatePetRecommendations = async (userId) => {
         },
         { $unwind: { path: '$shelter', preserveNullAndEmptyArrays: true } },
             
+        // Fetch owner data for pets listed by normal users
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'owner',
+                foreignField: '_id',
+                as: 'owner'
+            }
+        },
+        { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
+        
+        // Remove sensitive info from the populated owner object
+        { $unset: ["owner.passwordHash", "owner.searchPreferences", "owner.role"] },
+
         // calculate the Recommendation Score for each pet
         {
             $addFields: {
