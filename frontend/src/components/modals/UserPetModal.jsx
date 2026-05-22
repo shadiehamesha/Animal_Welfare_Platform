@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaTimes, FaCamera } from 'react-icons/fa';
+import ModernDatePicker from '../../utils/ModernDatePicker';
 
 const CustomSelect = ({ name, value, options, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +47,8 @@ const CustomSelect = ({ name, value, options, onChange }) => {
 const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
     const [formData, setFormData] = useState({
         name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',
-        healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' }
+        healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' },
+        vaccinationSchedule: []
     });
     const [photo, setPhoto] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -64,13 +66,19 @@ const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
                     vaccinated: pet.healthStatus?.vaccinated || false, 
                     sterilized: pet.healthStatus?.sterilized || false, 
                     medicalNotes: pet.healthStatus?.medicalNotes || '' 
-                }
+                },
+                vaccinationSchedule: pet.vaccinationSchedule?.map(v => ({
+                    vaccineName: v.vaccineName || '',
+                    dueDate: v.dueDate ? new Date(v.dueDate).toISOString().split('T')[0] : '',
+                    status: v.status || 'Pending'
+                })) || []
             });
             setPreviewUrl(pet.photos && pet.photos.length > 0 ? pet.photos[0] : null);
         } else {
             setFormData({
                 name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',
-                healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' }
+                healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' },
+                vaccinationSchedule: []
             });
             setPreviewUrl(null);
         }
@@ -92,6 +100,27 @@ const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
         }));
     };
 
+    const handleAddVaccine = () => {
+        setFormData(prev => ({
+            ...prev,
+            vaccinationSchedule: [...prev.vaccinationSchedule, { vaccineName: '', dueDate: '', status: 'Pending' }]
+        }));
+    };
+
+    const handleRemoveVaccine = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            vaccinationSchedule: prev.vaccinationSchedule.filter((_, i) => i !== index)
+        }));
+    };
+
+    const handleVaccineChange = (index, e) => {
+        const { name, value } = e.target;
+        const updatedSchedule = [...formData.vaccinationSchedule];
+        updatedSchedule[index][name] = value;
+        setFormData(prev => ({ ...prev, vaccinationSchedule: updatedSchedule }));
+    };
+
     const handlePhotoChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setPhoto(e.target.files[0]);
@@ -110,6 +139,7 @@ const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
         payload.append('size', formData.size);
         payload.append('gender', formData.gender);
         payload.append('healthStatus', JSON.stringify(formData.healthStatus));
+        payload.append('vaccinationSchedule', JSON.stringify(formData.vaccinationSchedule));
 
         if (photo) {
             payload.append('photo', photo);
@@ -201,6 +231,41 @@ const UserPetModal = ({ isOpen, onClose, onSave, pet }) => {
                                 <label className="block text-xs font-semibold text-slate-500 mb-1">Medical Notes (Optional)</label>
                                 <textarea name="medicalNotes" value={formData.healthStatus.medicalNotes} onChange={handleNestedChange} rows="2" placeholder="Any allergies or current medications?" className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all text-sm resize-none"></textarea>
                             </div>
+                        </div>
+
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-gray-200 mt-4">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-sm font-bold text-slate-800">Vaccination Schedule</h3>
+                                <button type="button" onClick={handleAddVaccine} className="text-xs font-bold text-teal-600 hover:text-teal-700 bg-teal-50 px-3 py-1.5 rounded-lg transition-colors">
+                                    + Add Vaccine
+                                </button>
+                            </div>
+                            
+                            {formData.vaccinationSchedule.length === 0 ? (
+                                <p className="text-xs text-slate-500 italic">No vaccines scheduled.</p>
+                            ) : (
+                                <div className="space-y-3">
+                                    {formData.vaccinationSchedule.map((vaccine, index) => (
+                                        <div key={index} className="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm relative group">
+                                            <div className="flex-1 w-full">
+                                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vaccine Name</label>
+                                                <input type="text" name="vaccineName" value={vaccine.vaccineName} onChange={(e) => handleVaccineChange(index, e)} required className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 transition-all text-sm" placeholder="e.g. Rabies" />
+                                            </div>
+                                            <div className="flex-1 w-full">
+                                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Due Date</label>
+                                                <ModernDatePicker name="dueDate" value={vaccine.dueDate} onChange={(e) => handleVaccineChange(index, e)} />
+                                            </div>
+                                            <div className="flex-1 w-full sm:w-auto min-w-[120px]">
+                                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                                                <CustomSelect name="status" value={vaccine.status} options={['Pending', 'Completed']} onChange={(e) => handleVaccineChange(index, e)} />
+                                            </div>
+                                            <button type="button" onClick={() => handleRemoveVaccine(index)} className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-gray-200 text-red-500 rounded-full flex items-center justify-center hover:bg-red-50 shadow-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                <FaTimes size={10} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </form>
                 </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
-import { FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle, FaEdit, FaTrash, FaUsers, FaCamera } from 'react-icons/fa';
+import { FaChartPie, FaPaw, FaCalendarAlt, FaHandsHelping, FaBuilding, FaPlus, FaFileImport, FaMapMarkerAlt, FaClock, FaCheckCircle, FaEdit, FaTrash, FaUsers, FaCamera, FaTimes } from 'react-icons/fa';
 import Navbar from '../../components/navigation.jsx';
 import Footer from '../../components/footer.jsx';
 import UserContactWidget from '../../components/UserContactWidget.jsx';
@@ -96,6 +96,7 @@ const OrganizationDashboard = () => {
     const defaultPetForm = {
         name: '', species: 'Dog', breed: '', age: '', size: 'Unknown', gender: 'Unknown',
         healthStatus: { vaccinated: false, sterilized: false, medicalNotes: '' },
+        vaccinationSchedule: [],
         adoptionStatus: 'Available', description: ''
     };
     const defaultEventForm = {
@@ -228,6 +229,11 @@ const OrganizationDashboard = () => {
             size: pet.size || 'Unknown',
             gender: pet.gender || 'Unknown',
             healthStatus: pet.healthStatus || { vaccinated: false, sterilized: false, medicalNotes: '' },
+            vaccinationSchedule: pet.vaccinationSchedule?.map(v => ({
+                vaccineName: v.vaccineName || '',
+                dueDate: v.dueDate ? new Date(v.dueDate).toISOString().split('T')[0] : '',
+                status: v.status || 'Pending'
+            })) || [],
             adoptionStatus: pet.adoptionStatus || 'Available',
             description: pet.description || ''
         });
@@ -241,6 +247,27 @@ const OrganizationDashboard = () => {
             setPhoto(e.target.files[0]);
             setPreviewUrl(URL.createObjectURL(e.target.files[0]));
         }
+    };
+
+    const handleAddVaccine = () => {
+        setPetForm(prev => ({
+            ...prev,
+            vaccinationSchedule: [...prev.vaccinationSchedule, { vaccineName: '', dueDate: '', status: 'Pending' }]
+        }));
+    };
+
+    const handleRemoveVaccine = (index) => {
+        setPetForm(prev => ({
+            ...prev,
+            vaccinationSchedule: prev.vaccinationSchedule.filter((_, i) => i !== index)
+        }));
+    };
+
+    const handleVaccineChange = (index, e) => {
+        const { name, value } = e.target;
+        const updatedSchedule = [...petForm.vaccinationSchedule];
+        updatedSchedule[index][name] = value;
+        setPetForm(prev => ({ ...prev, vaccinationSchedule: updatedSchedule }));
     };
 
     const handlePetSubmit = async (e) => {
@@ -260,6 +287,7 @@ const OrganizationDashboard = () => {
             payload.append('adoptionStatus', petForm.adoptionStatus);
             payload.append('description', petForm.description);
             payload.append('healthStatus', JSON.stringify(petForm.healthStatus));
+            payload.append('vaccinationSchedule', JSON.stringify(petForm.vaccinationSchedule));
 
             if (photo) {
                 payload.append('photo', photo);
@@ -896,6 +924,43 @@ const OrganizationDashboard = () => {
                                     </div>
                                     <input type="text" placeholder="Medical Notes (optional)" value={petForm.healthStatus.medicalNotes} onChange={(e) => setPetForm({...petForm, healthStatus: {...petForm.healthStatus, medicalNotes: e.target.value}})} className={inputClasses} />
                                 </div>
+                                
+                                {/* Vaccination Schedule UI Section */}
+                                <div className="col-span-2 bg-gray-50 p-4 rounded-xl border border-gray-200 mt-2">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-sm font-bold text-slate-800">Vaccination Schedule</h3>
+                                        <button type="button" onClick={handleAddVaccine} className="text-xs font-bold text-teal-600 hover:text-teal-700 bg-teal-50 px-3 py-1.5 rounded-lg transition-colors">
+                                            + Add Vaccine
+                                        </button>
+                                    </div>
+                                    
+                                    {petForm.vaccinationSchedule.length === 0 ? (
+                                        <p className="text-xs text-slate-500 italic">No vaccines scheduled.</p>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {petForm.vaccinationSchedule.map((vaccine, index) => (
+                                                <div key={index} className="flex flex-col sm:flex-row gap-3 items-start sm:items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm relative group">
+                                                    <div className="flex-1 w-full">
+                                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Vaccine Name</label>
+                                                        <input type="text" name="vaccineName" value={vaccine.vaccineName} onChange={(e) => handleVaccineChange(index, e)} required className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-teal-500 transition-all text-sm" placeholder="e.g. Rabies" />
+                                                    </div>
+                                                    <div className="flex-1 w-full">
+                                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Due Date</label>
+                                                        <ModernDatePicker name="dueDate" value={vaccine.dueDate} onChange={(e) => handleVaccineChange(index, e)} />
+                                                    </div>
+                                                    <div className="flex-1 w-full sm:w-auto min-w-[120px]">
+                                                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                                                        <CustomSelect name="status" value={vaccine.status} options={[{value: 'Pending', label: 'Pending'}, {value: 'Completed', label: 'Completed'}]} onChange={(e) => handleVaccineChange(index, e)} />
+                                                    </div>
+                                                    <button type="button" onClick={() => handleRemoveVaccine(index)} className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-gray-200 text-red-500 rounded-full flex items-center justify-center hover:bg-red-50 shadow-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                                        <FaTimes size={10} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
                             </div>
                             <button type="submit" className="w-full mt-4 bg-teal-600 text-white font-bold py-3.5 rounded-xl hover:bg-teal-700 transition">
                                 {editingPetId ? 'Update Pet Profile' : 'Save Pet Profile'}
