@@ -5,13 +5,48 @@ import { generatePetRecommendations } from '../services/recommendation.service.j
 import { deleteImageFromCloudinary } from '../utils/cloudinary.util.js';
 
 const processPetData = (reqBody) => {
-    if (typeof reqBody.healthStatus === 'string') {
-        reqBody.healthStatus = JSON.parse(reqBody.healthStatus);
+    // Create a copy to safely modify
+    let processed = { ...reqBody };
+
+    // Parse healthStatus
+    if (typeof processed.healthStatus === 'string') {
+        try {
+            processed.healthStatus = JSON.parse(processed.healthStatus);
+        } catch (error) {
+            console.error("Failed to parse healthStatus");
+            delete processed.healthStatus;
+        }
     }
-    if (reqBody.imageUrl) {
-        reqBody.photos = [reqBody.imageUrl];
+
+    // Parse vaccinationSchedule & filter out empty/invalid dates
+    if (typeof processed.vaccinationSchedule === 'string') {
+        try {
+            const parsedSchedule = JSON.parse(processed.vaccinationSchedule);
+            if (Array.isArray(parsedSchedule)) {
+                // Filter out entries missing a name or a date to prevent Mongoose Date CastErrors
+                processed.vaccinationSchedule = parsedSchedule.filter(
+                    v => v.vaccineName && v.vaccineName.trim() !== '' && v.dueDate && v.dueDate.trim() !== ''
+                );
+            } else {
+                processed.vaccinationSchedule = [];
+            }
+        } catch (error) {
+            console.error("Failed to parse vaccinationSchedule");
+            delete processed.vaccinationSchedule;
+        }
     }
-    return reqBody;
+
+    // Map single image upload to the photos array
+    if (processed.imageUrl) {
+        processed.photos = [processed.imageUrl];
+        delete processed.imageUrl; // Cleanup temp field
+    }
+
+    // Ensure enum fields fallback properly if empty
+    if (processed.size === '') processed.size = 'Unknown';
+    if (processed.gender === '') processed.gender = 'Unknown';
+
+    return processed;
 };
 
 export const getPublicPets = async (req, res) => {
@@ -72,7 +107,7 @@ export const updateUserPet = async (req, res) => {
         const updatedPet = await Pet.findOneAndUpdate(
             { _id: req.params.id, owner: req.user._id },
             { $set: processedData },
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
         if (!updatedPet) return res.status(404).json({ message: 'Pet not found or unauthorized' });
         res.status(200).json(updatedPet);
@@ -133,7 +168,7 @@ export const updatePetStatus = async (req, res) => {
         const updatedPet = await Pet.findByIdAndUpdate(
             req.params.id, 
             { $set: processedData }, 
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
         if (!updatedPet) return res.status(404).json({ message: 'Pet not found' });
         res.status(200).json(updatedPet);
@@ -196,7 +231,7 @@ export const updatePetAdmin = async (req, res) => {
         const updatedPet = await Pet.findByIdAndUpdate(
             req.params.id,
             { $set: processedData },
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         )
         .populate('shelter', 'organizationName city')
         .populate('owner', 'name email');
