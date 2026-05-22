@@ -73,7 +73,7 @@ const HeatmapWidget = ({ token }) => {
             </div>
             
             <div className="h-[400px] w-full overflow-hidden rounded-[2rem] shadow-sm border border-slate-100">
-                <APIProvider apiKey={MAPS_API_KEY}>
+                <APIProvider apiKey={MAPS_API_KEY} version="3.64">
                     <Map
                         defaultCenter={{ lat: 7.8731, lng: 80.7718 }} // Centered on Sri Lanka
                         defaultZoom={7}
