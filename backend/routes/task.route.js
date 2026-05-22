@@ -1,5 +1,5 @@
 import express from 'express';
-import { createVolunteerTask, getTasks, updateTask, deleteTask, approveVolunteerTask, getPublicTasks, getUserTasks } from '../controllers/task.controller.js';
+import { createVolunteerTask, getTasks, updateTask, deleteTask, approveVolunteerTask, getPublicTasks, getUserTasks, claimTask } from '../controllers/task.controller.js';
 import { protect, shelterManager } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/public', getPublicTasks);
 
 router.get('/my-volunteer-tasks', protect, getUserTasks);
+router.post('/:id/claim', protect, claimTask);
 
 // Shelter Manager Routes
 router.post('/', protect, shelterManager, createVolunteerTask);

@@ -88,3 +88,21 @@ export const getUserTasks = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+export const claimTask = async (req, res) => {
+    try {
+        const task = await Task.findById(req.params.id);
+        
+        if (!task) return res.status(404).json({ message: 'Task not found' });
+        if (task.status !== 'Open') return res.status(400).json({ message: 'This task is no longer available.' });
+
+        task.volunteer = req.user._id;
+        task.status = 'Claimed';
+        
+        await task.save();
+
+        res.status(200).json({ message: 'Successfully registered for the task.', task });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};

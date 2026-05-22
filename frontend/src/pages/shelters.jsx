@@ -116,6 +116,38 @@ const Shelters = () => {
         }
     };
 
+    // Claim / Register for Volunteer Task
+    const handleClaimTask = async (taskId) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("Please log in to register for volunteer tasks.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:5000/api/tasks/${taskId}/claim`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                alert("Successfully registered for the task!");
+                setShelterTasks(prevTasks => 
+                    prevTasks.map(t => t._id === taskId ? { ...t, status: 'Claimed' } : t)
+                );
+            } else {
+                alert(data.message || "Failed to register for task.");
+            }
+        } catch (error) {
+            console.error("Error claiming task:", error);
+            alert("An error occurred. Please try again.");
+        }
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-[#f9fdfc] font-sans">
             <Navbar />
@@ -425,6 +457,20 @@ const Shelters = () => {
                                                                 <h4 className="font-bold text-slate-900 text-lg mb-1">{task.title}</h4>
                                                                 <p className="text-slate-600 text-sm">{task.description}</p>
                                                             </div>
+
+                                                            {/* User Action for Volunteer Tasks */}
+                                                            {task.status === 'Open' ? (
+                                                                <button 
+                                                                    onClick={() => handleClaimTask(task._id)}
+                                                                    className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition-colors shrink-0"
+                                                                >
+                                                                    Volunteer Now
+                                                                </button>
+                                                            ) : (
+                                                                <span className="bg-gray-100 text-gray-500 px-4 py-2.5 rounded-xl font-bold text-sm shrink-0">
+                                                                    No longer available
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     ))
                                                 ) : (
