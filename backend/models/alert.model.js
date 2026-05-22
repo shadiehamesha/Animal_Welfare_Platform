@@ -8,7 +8,7 @@ const alertSchema = new mongoose.Schema({
     },
     message: { type: String, required: true },
     location: { // For geotargeted alerts
-        type: { type: String, enum: ['Point'], default: 'Point' },
+        type: { type: String, enum: ['Point'] },
         coordinates: { type: [Number] }
     },
     targetUser: { // For personalized reminders
