@@ -112,7 +112,7 @@ const UserReportsList = ({ reports }) => {
     return (
         <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 lg:p-8 flex flex-col h-full">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-slate-900">My Stray Reports</h2>
+                <h2 className="text-xl font-bold text-slate-900">My Reports</h2>
                 <Link to="/report" className="text-teal-600 text-sm font-semibold hover:text-teal-700 bg-teal-50 px-4 py-2 rounded-full transition-colors">
                     + New Report
                 </Link>
