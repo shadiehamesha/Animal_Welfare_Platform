@@ -1,34 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { APIProvider, Map, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
+import { APIProvider, Map, useMap } from '@vis.gl/react-google-maps';
+import { GoogleMapsOverlay } from '@deck.gl/google-maps';
+import { HeatmapLayer as DeckGlHeatmapLayer } from '@deck.gl/aggregation-layers';
 import axios from 'axios';
 
-// Component responsible for rendering the actual Heatmap Layer inside the map context
-const HeatmapLayer = ({ data }) => {
+const HeatmapOverlay = ({ data }) => {
     const map = useMap();
-    const visualization = useMapsLibrary('visualization'); // Load the visualization library
 
     useEffect(() => {
-        // Wait until map, data, AND the visualization library are fully loaded
-        if (!map || !data || data.length === 0 || !visualization) return;
+        if (!map || !data || data.length === 0) return;
 
-        // Map the backend coordinates to Google Maps LatLng objects
+        // Deck.gl strictly requires arrays in [longitude, latitude] order
         const heatmapData = data.map(point => ({
-            location: new window.google.maps.LatLng(point.lat, point.lng),
+            position: [point.lng, point.lat], 
             weight: point.weight || 1
         }));
 
-        // Initialize the visualization layer using the safely loaded library
-        const heatmap = new visualization.HeatmapLayer({
+        const heatmapLayer = new DeckGlHeatmapLayer({
+            id: 'heatmap-layer',
             data: heatmapData,
-            radius: 30, // Adjust radius to determine cluster spread
-            opacity: 0.8
+            getPosition: d => d.position,
+            getWeight: d => d.weight,
+            radiusPixels: 30, 
         });
 
-        heatmap.setMap(map);
+        const overlay = new GoogleMapsOverlay({
+            layers: [heatmapLayer]
+        });
 
-        // Cleanup when unmounting or data changes
-        return () => heatmap.setMap(null);
-    }, [map, data, visualization]);
+        // Attach the deck.gl overlay to the Google Map instance
+        overlay.setMap(map);
+
+        return () => {
+            overlay.setMap(null);
+        };
+    }, [map, data]);
 
     return null; 
 };
@@ -36,6 +42,7 @@ const HeatmapLayer = ({ data }) => {
 const HeatmapWidget = ({ token }) => {
     const [heatmapData, setHeatmapData] = useState([]);
     const [loading, setLoading] = useState(true);
+    
     const MAPS_API_KEY = import.meta.env.VITE_MAPS || import.meta.env.VITE_MAPS_API_KEY || "";
 
     useEffect(() => {
@@ -73,15 +80,15 @@ const HeatmapWidget = ({ token }) => {
             </div>
             
             <div className="h-[400px] w-full overflow-hidden rounded-[2rem] shadow-sm border border-slate-100">
-                <APIProvider apiKey={MAPS_API_KEY} version="3.64">
+                <APIProvider apiKey={MAPS_API_KEY} version="weekly">
                     <Map
-                        defaultCenter={{ lat: 7.8731, lng: 80.7718 }} // Centered on Sri Lanka
+                        defaultCenter={{ lat: 7.8731, lng: 80.7718 }} 
                         defaultZoom={7}
                         mapId="HEATMAP_WIDGET_MAP_ID"
                         disableDefaultUI={true}
                         zoomControl={true}
                     >
-                        <HeatmapLayer data={heatmapData} />
+                        <HeatmapOverlay data={heatmapData} />
                     </Map>
                 </APIProvider>
             </div>
